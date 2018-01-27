@@ -8,8 +8,22 @@ public class ProcessingSound extends PApplet{
     OPC opc;
 
 
-    // state
+    // state management
     String state;
+
+    final String FIRE_ANIMATION = "fireAnimation";
+    final String DOTS_ANIMATION = "dotsAnimation";
+
+    final int ANIMATION_LENGTH = 20 * 1000;
+
+    boolean fireAnimationInitialized = false;
+    boolean dotsInitialized = false;
+    boolean audioTransform1Initialized = false;
+    boolean initialized = false;
+
+    int currentStateStartedAtMs = 0;
+    int currentTimerMillis = 0;
+    int timerDifference = 0;
 
     // Declare the processing sound variables
     SoundFile sample;
@@ -18,7 +32,6 @@ public class ProcessingSound extends PApplet{
 
 
     // Audio transform 1
-
 
     // Declare a scaling factor
     float scale = 5.0f;
@@ -59,6 +72,10 @@ public class ProcessingSound extends PApplet{
 
         setupFireAnimation();
         setuDots();
+        setupAudioTransform1();
+        setupAudioTransform2();
+
+        resetTimer();
 
 
         float bottomCenter = width / 4;
@@ -81,6 +98,8 @@ public class ProcessingSound extends PApplet{
         // initialize to default state
         state = "default";
 
+        currentStateStartedAtMs = millis();
+
     }
 
     @Override
@@ -90,10 +109,10 @@ public class ProcessingSound extends PApplet{
             case "default":
                 defaultDraw();
                 break;
-            case "fireAnimation":
+            case FIRE_ANIMATION:
                 drawFireAnimation();
                 break;
-            case "dotAnimation":
+            case DOTS_ANIMATION:
                 drawDots();
                 break;
             case "audio1":
@@ -105,7 +124,6 @@ public class ProcessingSound extends PApplet{
             default:
                 defaultDraw();
                 break;
-
         }
     }
 
@@ -116,16 +134,28 @@ public class ProcessingSound extends PApplet{
 
     private void defaultDraw()
     {
+        background(0);
 
+        timerDifference = timerDiff();
+
+        if (timerDifference > 6000) {
+            resetTimer();
+            greenEllipse();
+        } else if (timerDifference > 3000) {
+            blueEllipse();
+        } else if (timerDifference <= 3000){
+            redEllipse();
+        }
+
+        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
+            switchToState(FIRE_ANIMATION);
+        }
     }
 
     private void setupFireAnimation()
     {
         // Load a sample image
         fireImage = loadImage("flames.jpeg");
-
-        // Connect to the local instance of fcserver
-        opc = new OPC(this, "127.0.0.1", 7890);
     }
 
     private void setuDots()
@@ -136,13 +166,14 @@ public class ProcessingSound extends PApplet{
 
     private void setupAudioTransform1()
     {
+        // TODO: only load when switched to
         //Load and play a soundfile and loop it
-        sample = new SoundFile(this, "TessellatedEscher.mp3");
-        sample.loop();
+//        sample = new SoundFile(this, "TessellatedEscher.mp3");
+//        sample.loop();
 
         // Create and patch the rms tracker
-        rms = new Amplitude(this);
-        rms.input(sample);
+//        rms = new Amplitude(this);
+//        rms.input(sample);
     }
 
     private void setupAudioTransform2()
@@ -171,6 +202,10 @@ public class ProcessingSound extends PApplet{
         // Use two copies of the image, so it seems to repeat infinitely
         image(fireImage, 0, y, width, imHeight);
         image(fireImage, 0, y + imHeight, width, imHeight);
+
+        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
+            switchToState(DOTS_ANIMATION);
+        }
     }
 
     private void drawDots()
@@ -213,4 +248,83 @@ public class ProcessingSound extends PApplet{
             line( i, height, i * 2, height - spectrum[i] * height * 15 );
         }
     }
+
+    private void drawRed()
+    {
+        background(255, 0, 0);
+    }
+
+    private void drawGreen()
+    {
+        background(0, 255, 0);
+    }
+
+    private void drawBlue()
+    {
+        background(0, 0, 255);
+    }
+
+    private void blueEllipse()
+    {
+        noStroke();
+        fill(0, 0, 255);
+        ellipse(width/2, height/2, 100, 100);
+    }
+
+    private void redEllipse()
+    {
+        noStroke();
+        fill(255, 0, 0);
+        ellipse(width/2, height/2, 100, 100);
+    }
+
+    private void greenEllipse()
+    {
+        noStroke();
+        fill(0, 255, 0);
+        ellipse(width/2, height/2, 100, 100);
+    }
+
+    private void defaultCleanup()
+    {
+
+    }
+
+    private void switchToState(String newState)
+    {
+        if (state == newState) {
+            return;
+        }
+
+        // clean up old state
+        switch (state) {
+            default:
+                defaultCleanup();
+                break;
+        }
+
+        currentStateStartedAtMs = millis();
+
+        // TODO: implement pre-state changes
+        switch(newState) {
+        }
+
+        state = newState;
+    }
+
+    private int timerDiff()
+    {
+        return millis() - currentTimerMillis;
+    }
+
+    private void resetTimer()
+    {
+        currentTimerMillis = millis();
+    }
+
+    private int msSinceCurrentStateStarted()
+    {
+        return millis() - currentStateStartedAtMs;
+    }
 }
+
