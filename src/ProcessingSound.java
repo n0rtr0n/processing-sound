@@ -2,6 +2,15 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import processing.sound.*;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
+
 public class ProcessingSound extends PApplet{
 
     // OpenPixelControl client
@@ -11,6 +20,7 @@ public class ProcessingSound extends PApplet{
     // state management
     String state;
 
+    final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
 
@@ -20,6 +30,11 @@ public class ProcessingSound extends PApplet{
     boolean dotsInitialized = false;
     boolean audioTransform1Initialized = false;
     boolean initialized = false;
+
+
+    boolean stateChangeRequested = false;
+
+
 
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
@@ -106,7 +121,7 @@ public class ProcessingSound extends PApplet{
     public void draw() {
 
         switch(state) {
-            case "default":
+            case DEFAULT_ANIMATION:
                 defaultDraw();
                 break;
             case FIRE_ANIMATION:
@@ -128,9 +143,21 @@ public class ProcessingSound extends PApplet{
     }
 
     public static void main (String... args) {
-        ProcessingSound ps = new ProcessingSound();
-        PApplet.runSketch(new String[]{"ProcessingSound"}, ps);
+        try {
+//            HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+//            server.createContext("/test", new MyHandler());
+//            server.setExecutor(null); // creates a default executor
+//            server.start();
+
+            ProcessingSound ps = new ProcessingSound();
+            PApplet.runSketch(new String[]{"ProcessingSound"}, ps);
+
+        } catch (Exception e) {
+
+        }
     }
+
+
 
     private void defaultDraw()
     {
@@ -249,21 +276,6 @@ public class ProcessingSound extends PApplet{
         }
     }
 
-    private void drawRed()
-    {
-        background(255, 0, 0);
-    }
-
-    private void drawGreen()
-    {
-        background(0, 255, 0);
-    }
-
-    private void drawBlue()
-    {
-        background(0, 0, 255);
-    }
-
     private void blueEllipse()
     {
         noStroke();
@@ -325,6 +337,30 @@ public class ProcessingSound extends PApplet{
     private int msSinceCurrentStateStarted()
     {
         return millis() - currentStateStartedAtMs;
+    }
+
+    static class MyHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange t) throws IOException {
+            String response = "This is the response";
+            t.sendResponseHeaders(200, response.length());
+            OutputStream os = t.getResponseBody();
+            os.write(response.getBytes());
+            os.close();
+        }
+
+    }
+
+
+    public void keyPressed() {
+        if (key == 'a') {
+            switchToState(FIRE_ANIMATION);
+        } else if (key == 'b') {
+            switchToState(DEFAULT_ANIMATION);
+        } else if(key == 'c') {
+            switchToState(DOTS_ANIMATION);
+        }
     }
 }
 
