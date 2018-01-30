@@ -2,3 +2,5 @@
 out
 hs_err*
 *.iml
+.DS_Store
+src/.DS_Store

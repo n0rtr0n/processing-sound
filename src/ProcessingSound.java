@@ -1,15 +1,18 @@
+
 import processing.core.PApplet;
 import processing.core.PImage;
-import processing.sound.*;
+//import processing.sound.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import Animations.Animation;
 
 public class ProcessingSound extends PApplet{
 
@@ -19,10 +22,17 @@ public class ProcessingSound extends PApplet{
 
     // state management
     String state;
+    String previousState;
+//    Animation FireAnimation;
 
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
+    final String SPIRAL_ANIMATION = "spiralAnimation";
+    final String PSYCH_CUBE_ANIMATION = "psychCubeAnimation";
+    final String BUBBLE_SINE_ANIMATION = "bubbleSineAnimation";
+    final String RAINBOW_SLOW_ANIMATION = "rainbowSlowAnimation";
+    final String RAINBOW_FAST_ANIMATION = "rainbowFastAnimation";
 
     final int ANIMATION_LENGTH = 20 * 1000;
 
@@ -41,9 +51,9 @@ public class ProcessingSound extends PApplet{
     int timerDifference = 0;
 
     // Declare the processing sound variables
-    SoundFile sample;
-    Amplitude rms;
-    AudioIn in;
+//    SoundFile sample;
+//    Amplitude rms;
+//    AudioIn in;
 
 
     // Audio transform 1
@@ -60,9 +70,9 @@ public class ProcessingSound extends PApplet{
 
 
     // Audio transform 2
-    FFT fft;
-    int bands = 512;
-    float[] spectrum = new float[bands];
+//    FFT fft;
+//    int bands = 512;
+//    float[] spectrum = new float[bands];
 
 
 
@@ -73,9 +83,58 @@ public class ProcessingSound extends PApplet{
     // Dots
     PImage dot;
 
+
+    // Psych Spirals
+
+    float segments = 12;
+    int centX, centY;
+    float lastX, lastY;
+    int col = 100;
+    int colInc = 1;
+    float rot = 0.0f; // rotate by this each time
+    int interval = 30 * 60;
+
+
+    // Psych cubes
+    int div=16;
+    int t=0;
+    float du, r;
+
+
+    // Bubble Sine animation
+    int bubbleSize     = 0;
+    int bubblelocation = 0;
+    float bubbleOpacity = 0;
+    float bubbleThisloop = 0;
+    float bubbleEllipsesize = 0;
+    float bubbleTransparency = 0;
+
+    int bubbleNumloop = 10;
+
+    float bubbleCounter = 0;
+
+    float[] bubbleLastvalue = new float[1000];
+    float[] bubbleSpaceplace = new float[1000];
+    int[] bubbleLastsmaller = new int[1000];
+
+    float bubbleMinvalue = 1000;
+
+    float bubbleHue = 0;
+
+
+
+    // Color wheel params
+    int colorRed = 0;
+    int colorBlue = 0;
+    int colorGreen = 0;
+
+    int lastColorChangeAt = millis();
+
     @Override
     public void settings() {
 //        size(640, 360);
+        // size(800, 200, P3D);
+        // TODO: figure out OpenGLException issue
         size(800, 200);
     }
 
@@ -87,8 +146,9 @@ public class ProcessingSound extends PApplet{
 
         setupFireAnimation();
         setuDots();
-        setupAudioTransform1();
-        setupAudioTransform2();
+//        setupAudioTransform1();
+//        setupAudioTransform2();
+        setupPsychCubes();
 
         resetTimer();
 
@@ -111,7 +171,7 @@ public class ProcessingSound extends PApplet{
 
 
         // initialize to default state
-        state = "default";
+        state = DEFAULT_ANIMATION;
 
         currentStateStartedAtMs = millis();
 
@@ -122,7 +182,8 @@ public class ProcessingSound extends PApplet{
 
         switch(state) {
             case DEFAULT_ANIMATION:
-                defaultDraw();
+                //defaultDraw();
+                drawFireAnimation(); // setting fire animation to default for now
                 break;
             case FIRE_ANIMATION:
                 drawFireAnimation();
@@ -130,12 +191,27 @@ public class ProcessingSound extends PApplet{
             case DOTS_ANIMATION:
                 drawDots();
                 break;
-            case "audio1":
-                drawAudioTransform1();
+            case SPIRAL_ANIMATION:
+                drawSpiralAnimation();
                 break;
-            case "audio2":
-                drawAudioTransform2();
+            case PSYCH_CUBE_ANIMATION:
+                drawPsychCubeAnimation();
                 break;
+            case BUBBLE_SINE_ANIMATION:
+                drawBubbleSineAnimation();
+                break;
+            case RAINBOW_SLOW_ANIMATION:
+                drawRainbowSlowAnimation();
+                break;
+            case RAINBOW_FAST_ANIMATION:
+                drawRainbowFastAnimation();
+                break;
+//            case "audio1":
+//                drawAudioTransform1();
+//                break;
+//            case "audio2":
+//                drawAudioTransform2();
+//                break;
             default:
                 defaultDraw();
                 break;
@@ -203,18 +279,18 @@ public class ProcessingSound extends PApplet{
 //        rms.input(sample);
     }
 
-    private void setupAudioTransform2()
-    {
-        // Create an Input stream which is routed into the Amplitude analyzer
-        fft = new FFT(this, bands);
-        in = new AudioIn(this, 0);
-
-        // start the Audio Input
-        in.start();
-
-        // patch the AudioIn
-        fft.input(in);
-    }
+//    private void setupAudioTransform2()
+//    {
+//        // Create an Input stream which is routed into the Amplitude analyzer
+//        fft = new FFT(this, bands);
+//        in = new AudioIn(this, 0);
+//
+//        // start the Audio Input
+//        in.start();
+//
+//        // patch the AudioIn
+//        fft.input(in);
+//    }
 
 
     private void drawFireAnimation()
@@ -230,9 +306,16 @@ public class ProcessingSound extends PApplet{
         image(fireImage, 0, y, width, imHeight);
         image(fireImage, 0, y + imHeight, width, imHeight);
 
-        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
-            switchToState(DOTS_ANIMATION);
-        }
+        // TODO: implement auto-rotating transitions
+//        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
+//            switchToState(DOTS_ANIMATION);
+//        }
+    }
+
+    private void setupPsychCubes()
+    {
+        float du = max(width, height)/2;
+        float r = du/16;
     }
 
     private void drawDots()
@@ -244,43 +327,192 @@ public class ProcessingSound extends PApplet{
         image(dot, (float) (mouseX - dotSize / 2) , (float) (mouseY - dotSize / 2), (float) dotSize, (float) dotSize);
     }
 
-    private void drawAudioTransform1()
+//    private void drawAudioTransform1()
+//    {
+//        // Set background color, noStroke and fill color
+//        background(0, 0, 255);
+//        noStroke();
+//        fill(255, 0, 150);
+//
+//        // Smooth the rms data by smoothing factor
+//        sum += (rms.analyze() - sum) * smoothFactor;
+//
+//        // rms.analyze() return a value between 0 and 1. It's
+//        // scaled to height/2 and then multiplied by a scale factor
+//        float rmsScaled = sum * (height/2) * scale;
+//
+//        // Draw an ellipse at a size based on the audio analysis
+//        ellipse(width/2, height/2, rmsScaled, rmsScaled);
+//    }
+//
+//    private void drawAudioTransform2()
+//    {
+//        background(0);
+//
+//        fft.analyze(spectrum);
+//
+//        for(int i = 0; i < bands; i++){
+//            // The result of the FFT is normalized
+//            // draw the line for frequency band i scaling it up by 5 to get more amplitude.
+//            stroke(255);
+//            line( i, height, i * 2, height - spectrum[i] * height * 15 );
+//        }
+//    }
+
+    private void drawSpiralAnimation()
     {
-        // Set background color, noStroke and fill color
-        background(0, 0, 255);
-        noStroke();
-        fill(255, 0, 150);
+        float offset = 0.0f; // Offset each iteration by this
+        background(0);
+        float bigRadius = 1;
+        float smallRadius = 2;
+        stroke(col, 0, 0);
+        segments = 8;
 
-        // Smooth the rms data by smoothing factor
-        sum += (rms.analyze() - sum) * smoothFactor;
+        for (int i = 0 ; i <  100; i ++)
+        {
+            float thetaInc = TWO_PI / segments;
+            for (float theta = 0 ; theta < TWO_PI ; theta += thetaInc)
+            {
+                float x = centX + sin(theta + offset + rot) * bigRadius;
+                float y = centY +cos(theta + offset + rot) * bigRadius;
+                fill(col, 0, random(0, 255));
+                stroke(col, 0, random(0, 255));
 
-        // rms.analyze() return a value between 0 and 1. It's
-        // scaled to height/2 and then multiplied by a scale factor
-        float rmsScaled = sum * (height/2) * scale;
-
-        // Draw an ellipse at a size based on the audio analysis
-        ellipse(width/2, height/2, rmsScaled, rmsScaled);
+                //line(lastX, lastY, x, y);
+                lastX = x;
+                lastY = y;
+                ellipse(x, y, smallRadius * 2.0f, smallRadius * 2.0f);
+            }
+            bigRadius += 10f;
+            smallRadius += 0.4f;
+            offset += 0.2f;
+        }
+        if ((col > 255) || (col < 100))
+        {
+            colInc = - colInc;
+        }
+        col += colInc;
+        rot -= 0.01f; //(float)(mouseY - centY) / ((float) height * 10.0f);
     }
 
-    private void drawAudioTransform2()
+    private void drawPsychCubeAnimation()
     {
-        background(0);
+        t++;
+        background(t%256, 255, 192+64*cos(t*PI/12));
 
-        fft.analyze(spectrum);
+        translate(width/2, height/2, -du);
 
-        for(int i = 0; i < bands; i++){
-            // The result of the FFT is normalized
-            // draw the line for frequency band i scaling it up by 5 to get more amplitude.
-            stroke(255);
-            line( i, height, i * 2, height - spectrum[i] * height * 15 );
+        rotateZ(t*PI/360);
+        for (int k=0; k<14; k++) {
+            rotateZ(t * PI / 1200);
+
+            for (int i = 0; i < div; i++) {
+                rotateZ(2 * PI / div);
+
+                pushMatrix();
+                translate(k * r, (float) (1.2 * r + k * k * r * 0.25), 0);
+
+                //立方体
+                pushMatrix();
+                rotateY(k * 2 * PI / div + t * PI / 48);
+                fill(i * 255 / div, 216, 216, 128);
+                strokeWeight(du / 384);
+                stroke(255, 48);
+                box((float) (r * 1.56 + k * r / 2.6));
+                popMatrix();
+
+                //直線
+                pushMatrix();
+                translate(0, 0, du / 4);
+                strokeWeight(du / 280);
+                stroke(255, 56);
+                line(0, 0, 0, -16 * du);
+                popMatrix();
+
+                popMatrix();
+            }
         }
     }
+
+    private void drawBubbleSineAnimation()
+    {
+        int ystart = height / 6;
+        int xstart = 10;
+
+        int xSpeed = 4;
+        background(0);
+
+
+        bubbleCounter = (float) (bubbleCounter + 0.01);
+
+        bubbleNumloop = (width)/10;
+
+//        colorMode(HSB,360,50,80);
+
+        bubbleHue = (float) ( bubbleHue + 0.1) ;
+        if (bubbleHue > 360) {bubbleHue = 0;}
+
+        for (int i = 0; i < bubbleNumloop; i = i+1) {
+            bubbleThisloop = displayHeight/3 + sin(i*bubbleCounter)*displayHeight/3;
+
+            if (bubbleThisloop < bubbleMinvalue) {bubbleMinvalue = bubbleThisloop;}
+
+            if (bubbleSpaceplace[i] == 0) { bubbleSpaceplace[i] = 1; } // initiate the spaceplace
+            if (bubbleThisloop < bubbleLastvalue[i]) {bubbleLastsmaller[i] = 1; } // if this loop is bigger than the last one, set lastsmaller to 1
+
+            bubbleLastvalue[i] = bubbleThisloop; // set lastvalue;
+
+            bubbleTransparency = (150 + cos(i*bubbleCounter) * 105 * bubbleSpaceplace[i]);
+
+            fill(round(bubbleHue),100,100,bubbleTransparency);
+
+
+            bubbleEllipsesize = (float) (20 + (width/bubbleNumloop) + cos(i*bubbleCounter) * 0.5 * (width/bubbleNumloop) * bubbleSpaceplace[i]);
+            ellipse((float) (xstart+i*(width/bubbleNumloop)* xSpeed),ystart+bubbleThisloop,bubbleEllipsesize,bubbleEllipsesize);
+
+
+            if (bubbleLastsmaller[i] == 1) // if the previous loop was smaller than the last one..
+            {
+                if (bubbleThisloop > bubbleLastvalue[i] ) // and if this loop is bigger than the last one..
+                {
+                    bubbleSpaceplace[i] = bubbleSpaceplace[i]*(-1); // flip the bit
+                    bubbleLastsmaller[i] = 0;
+                }
+            }
+
+        }
+    }
+
+    private void drawRainbowSlowAnimation()
+    {
+        if (msSince(lastColorChangeAt) > 150) {
+            if (colorRed >= 255)  {
+                colorRed = 0;
+            }  else  {
+                colorRed++;
+            }
+            lastColorChangeAt = millis();
+        }
+        background(colorRed, 255, 255);
+    }
+
+    private void drawRainbowFastAnimation()
+    {
+        if (colorRed >= 255)  {
+            colorRed = 0;
+        }  else  {
+            colorRed++;
+        }
+        background(colorRed, 255, 255);
+    }
+
+
 
     private void blueEllipse()
     {
         noStroke();
         fill(0, 0, 255);
-        ellipse(width/2, height/2, 100, 100);
+        this.ellipse(width/2, height/2, 100, 100);
     }
 
     private void redEllipse()
@@ -319,8 +551,24 @@ public class ProcessingSound extends PApplet{
 
         // TODO: implement pre-state changes
         switch(newState) {
+            case DEFAULT_ANIMATION:
+            case FIRE_ANIMATION:
+            case DOTS_ANIMATION:
+            case SPIRAL_ANIMATION:
+            case PSYCH_CUBE_ANIMATION:
+            case BUBBLE_SINE_ANIMATION:
+                colorMode(RGB);
+                break;
+            case RAINBOW_SLOW_ANIMATION:
+            case RAINBOW_FAST_ANIMATION:
+                colorMode(HSB);
+                break;
+            default:
+                return; // just return if we don't have an authorized state
+
         }
 
+        previousState = state;
         state = newState;
     }
 
@@ -339,6 +587,11 @@ public class ProcessingSound extends PApplet{
         return millis() - currentStateStartedAtMs;
     }
 
+    private int msSince(int timestamp)
+    {
+        return millis() - timestamp;
+    }
+
     static class MyHandler implements HttpHandler {
 
         @Override
@@ -349,18 +602,27 @@ public class ProcessingSound extends PApplet{
             os.write(response.getBytes());
             os.close();
         }
-
     }
 
 
     public void keyPressed() {
-        if (key == 'a') {
+        if (key == 'f') {
             switchToState(FIRE_ANIMATION);
-        } else if (key == 'b') {
+        } else if (key == '0') {
             switchToState(DEFAULT_ANIMATION);
-        } else if(key == 'c') {
+        } else if(key == 'd') {
             switchToState(DOTS_ANIMATION);
+        } else if (key == 's') {
+            switchToState(SPIRAL_ANIMATION);
+//        } else if (key == 'c') {
+//            // switchToState(PSYCH_CUBE_ANIMATION);
+//        }
+        } else if (key == 'b') {
+            switchToState(BUBBLE_SINE_ANIMATION);
+        } else if (key == 'r') {
+            switchToState(RAINBOW_SLOW_ANIMATION);
+        } else if (key == 'R') {
+            switchToState(RAINBOW_FAST_ANIMATION);
         }
     }
 }
-
