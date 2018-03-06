@@ -1,16 +1,23 @@
 package Animations;
 
-import java.util.ArrayList;
-import processing.core.PApplet;
+import LightPanelSystem.LightPanelSystem;
 import processing.core.PImage;
 
-public class FireAnimation extends PApplet implements Animation {
+public class FireAnimation implements Animation {
 
-    private ArrayList<Drawable> drawables;
+    private PImage fireImage;
 
-    public ArrayList<Drawable> getDrawableObjects()
+    private LightPanelSystem applet;
+
+    public FireAnimation(LightPanelSystem applet)
     {
-        return drawables;
+        this.applet = applet;
+    }
+
+
+    public void setup(String image)
+    {
+        fireImage = applet.loadImage(image);
     }
 
     public void play()
@@ -18,18 +25,17 @@ public class FireAnimation extends PApplet implements Animation {
 
     }
 
-//    public void draw()
-//    {
-//        // Scale the image so that it matches the width of the window
-//        int imHeight = fireImage.height * width / fireImage.width;
-//
-//        // Scroll down slowly, and wrap around
-//        float speed = 0.05f;
-//        float y = (millis() * -speed) % imHeight;
-//
-//        // Use two copies of the image, so it seems to repeat infinitely
-//        image(fireImage, 0, y, width, imHeight);
-//        image(fireImage, 0, y + imHeight, width, imHeight);
-//    }
+    public void draw()
+    {
+        // Scale the image so that it matches the width of the window
+        int imHeight = fireImage.height * applet.width / fireImage.width;
 
+        // Scroll down slowly, and wrap around
+        float speed = 0.05f;
+        float y = (applet.millis() * -speed) % imHeight;
+
+        // Use two copies of the image, so it seems to repeat infinitely
+        applet.image(fireImage, 0, y, applet.width, imHeight);
+        applet.image(fireImage, 0, y + imHeight, applet.width, imHeight);
+    }
 }

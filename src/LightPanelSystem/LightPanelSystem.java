@@ -1,29 +1,31 @@
+package LightPanelSystem;
 
+import Animations.*;
 import processing.core.PApplet;
 import processing.core.PImage;
 //import processing.sound.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
-import Animations.Animation;
-
-public class ProcessingSound extends PApplet{
+public class LightPanelSystem extends PApplet{
 
     // OpenPixelControl client
     OPC opc;
 
-
     // state management
     String state;
     String previousState;
-//    Animation FireAnimation;
+    FireAnimation fireAnimation;
+    LongRainbowFade longRainbowFadeAnimation;
+    FastRainbowFade fastRainbowFadeAnimation;
+    BubbleSine bubbleSineAnimation;
+
+    ColorWheel colorWheel;
 
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
@@ -74,12 +76,6 @@ public class ProcessingSound extends PApplet{
 //    int bands = 512;
 //    float[] spectrum = new float[bands];
 
-
-
-    // Fire animation
-    PImage fireImage;
-    
-
     // Dots
     PImage dot;
 
@@ -100,36 +96,6 @@ public class ProcessingSound extends PApplet{
     int t=0;
     float du, r;
 
-
-    // Bubble Sine animation
-    int bubbleSize     = 0;
-    int bubblelocation = 0;
-    float bubbleOpacity = 0;
-    float bubbleThisloop = 0;
-    float bubbleEllipsesize = 0;
-    float bubbleTransparency = 0;
-
-    int bubbleNumloop = 10;
-
-    float bubbleCounter = 0;
-
-    float[] bubbleLastvalue = new float[1000];
-    float[] bubbleSpaceplace = new float[1000];
-    int[] bubbleLastsmaller = new int[1000];
-
-    float bubbleMinvalue = 1000;
-
-    float bubbleHue = 0;
-
-
-
-    // Color wheel params
-    int colorRed = 0;
-    int colorBlue = 0;
-    int colorGreen = 0;
-
-    int lastColorChangeAt = millis();
-
     @Override
     public void settings() {
 //        size(640, 360);
@@ -141,10 +107,18 @@ public class ProcessingSound extends PApplet{
     @Override
     public void setup() {
 
+        colorWheel = new ColorWheel();
+        colorWheel.setLastColorChangeAt(millis());
+        colorWheel.setRed(0);
         // Connect to the local instance of fcserver
         opc = new OPC(this, "127.0.0.1", 7890);
 
         setupFireAnimation();
+
+        longRainbowFadeAnimation = new LongRainbowFade(this, colorWheel);
+        fastRainbowFadeAnimation = new FastRainbowFade(this, colorWheel);
+        bubbleSineAnimation = new BubbleSine(this);
+
         setuDots();
 //        setupAudioTransform1();
 //        setupAudioTransform2();
@@ -183,10 +157,10 @@ public class ProcessingSound extends PApplet{
         switch(state) {
             case DEFAULT_ANIMATION:
                 //defaultDraw();
-                drawFireAnimation(); // setting fire animation to default for now
+                fireAnimation.draw(); // setting fire animation to default for now
                 break;
             case FIRE_ANIMATION:
-                drawFireAnimation();
+                fireAnimation.draw();
                 break;
             case DOTS_ANIMATION:
                 drawDots();
@@ -225,8 +199,8 @@ public class ProcessingSound extends PApplet{
 //            server.setExecutor(null); // creates a default executor
 //            server.start();
 
-            ProcessingSound ps = new ProcessingSound();
-            PApplet.runSketch(new String[]{"ProcessingSound"}, ps);
+            LightPanelSystem ps = new LightPanelSystem();
+            PApplet.runSketch(new String[]{"LightPanelSystem"}, ps);
 
         } catch (Exception e) {
 
@@ -257,8 +231,8 @@ public class ProcessingSound extends PApplet{
 
     private void setupFireAnimation()
     {
-        // Load a sample image
-        fireImage = loadImage("flames.jpeg");
+        fireAnimation = new FireAnimation(this);
+        fireAnimation.setup("flames.jpeg");
     }
 
     private void setuDots()
@@ -291,26 +265,6 @@ public class ProcessingSound extends PApplet{
 //        // patch the AudioIn
 //        fft.input(in);
 //    }
-
-
-    private void drawFireAnimation()
-    {
-        // Scale the image so that it matches the width of the window
-        int imHeight = fireImage.height * width / fireImage.width;
-
-        // Scroll down slowly, and wrap around
-        float speed = 0.05f;
-        float y = (millis() * -speed) % imHeight;
-
-        // Use two copies of the image, so it seems to repeat infinitely
-        image(fireImage, 0, y, width, imHeight);
-        image(fireImage, 0, y + imHeight, width, imHeight);
-
-        // TODO: implement auto-rotating transitions
-//        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
-//            switchToState(DOTS_ANIMATION);
-//        }
-    }
 
     private void setupPsychCubes()
     {
@@ -436,77 +390,18 @@ public class ProcessingSound extends PApplet{
 
     private void drawBubbleSineAnimation()
     {
-        int ystart = height / 6;
-        int xstart = 10;
-
-        int xSpeed = 4;
-        background(0);
-
-
-        bubbleCounter = (float) (bubbleCounter + 0.01);
-
-        bubbleNumloop = (width)/10;
-
-//        colorMode(HSB,360,50,80);
-
-        bubbleHue = (float) ( bubbleHue + 0.1) ;
-        if (bubbleHue > 360) {bubbleHue = 0;}
-
-        for (int i = 0; i < bubbleNumloop; i = i+1) {
-            bubbleThisloop = displayHeight/3 + sin(i*bubbleCounter)*displayHeight/3;
-
-            if (bubbleThisloop < bubbleMinvalue) {bubbleMinvalue = bubbleThisloop;}
-
-            if (bubbleSpaceplace[i] == 0) { bubbleSpaceplace[i] = 1; } // initiate the spaceplace
-            if (bubbleThisloop < bubbleLastvalue[i]) {bubbleLastsmaller[i] = 1; } // if this loop is bigger than the last one, set lastsmaller to 1
-
-            bubbleLastvalue[i] = bubbleThisloop; // set lastvalue;
-
-            bubbleTransparency = (150 + cos(i*bubbleCounter) * 105 * bubbleSpaceplace[i]);
-
-            fill(round(bubbleHue),100,100,bubbleTransparency);
-
-
-            bubbleEllipsesize = (float) (20 + (width/bubbleNumloop) + cos(i*bubbleCounter) * 0.5 * (width/bubbleNumloop) * bubbleSpaceplace[i]);
-            ellipse((float) (xstart+i*(width/bubbleNumloop)* xSpeed),ystart+bubbleThisloop,bubbleEllipsesize,bubbleEllipsesize);
-
-
-            if (bubbleLastsmaller[i] == 1) // if the previous loop was smaller than the last one..
-            {
-                if (bubbleThisloop > bubbleLastvalue[i] ) // and if this loop is bigger than the last one..
-                {
-                    bubbleSpaceplace[i] = bubbleSpaceplace[i]*(-1); // flip the bit
-                    bubbleLastsmaller[i] = 0;
-                }
-            }
-
-        }
+        bubbleSineAnimation.play();
     }
 
     private void drawRainbowSlowAnimation()
     {
-        if (msSince(lastColorChangeAt) > 150) {
-            if (colorRed >= 255)  {
-                colorRed = 0;
-            }  else  {
-                colorRed++;
-            }
-            lastColorChangeAt = millis();
-        }
-        background(colorRed, 255, 255);
+        longRainbowFadeAnimation.play();
     }
 
     private void drawRainbowFastAnimation()
     {
-        if (colorRed >= 255)  {
-            colorRed = 0;
-        }  else  {
-            colorRed++;
-        }
-        background(colorRed, 255, 255);
+        fastRainbowFadeAnimation.play();
     }
-
-
 
     private void blueEllipse()
     {
@@ -582,12 +477,12 @@ public class ProcessingSound extends PApplet{
         currentTimerMillis = millis();
     }
 
-    private int msSinceCurrentStateStarted()
+    public int msSinceCurrentStateStarted()
     {
         return millis() - currentStateStartedAtMs;
     }
 
-    private int msSince(int timestamp)
+    public int msSince(int timestamp)
     {
         return millis() - timestamp;
     }

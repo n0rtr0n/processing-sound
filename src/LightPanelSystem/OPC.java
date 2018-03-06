@@ -1,3 +1,5 @@
+package LightPanelSystem;
+
 /*
  * Simple Open Pixel Control client for Processing,
  * designed to sample each LED's color from some point on the canvas.
