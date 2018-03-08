@@ -118,22 +118,33 @@ public class LightPanelSystem extends PApplet{
         resetTimer();
 
 
-        float bottomCenter = width / 4;
-        float topCenter = width - (width / 4);
+//        float bottomCenter = width / 4;
+//        float topCenter = width - (width / 4);
+//
+//        float spacing = width / 125;
+//        float bottomAngle = (float) Math.PI;
+//        float topAngle = 0;
+//        // Map one 64-LED strip to the center of the window
+//        opc.ledStrip(0, 64, bottomCenter, (float) (height * 0.20), spacing, bottomAngle, false);
+//        opc.ledStrip(64, 64, bottomCenter, (float) (height * 0.40), spacing, bottomAngle, false);
+//        opc.ledStrip(128, 64, bottomCenter, (float) (height * 0.60), spacing, bottomAngle, false);
+//        opc.ledStrip(192, 64, bottomCenter, (float) (height * 0.80), spacing, bottomAngle, false);
+//        opc.ledStrip(256, 64, topCenter, (float) (height * 0.20), spacing, topAngle, false);
+//        opc.ledStrip(320, 64, topCenter, (float) (height * 0.40), spacing, topAngle, false);
+//        opc.ledStrip(384, 64, topCenter, (float) (height * 0.60), spacing, topAngle, false);
+//        opc.ledStrip(448, 64, topCenter, (float) (height * 0.80), spacing, topAngle, false);
 
-        float spacing = width / 125;
-        float bottomAngle = (float) Math.PI;
-        float topAngle = 0;
-        // Map one 64-LED strip to the center of the window
-        opc.ledStrip(0, 64, bottomCenter, (float) (height * 0.20), spacing, bottomAngle, false);
-        opc.ledStrip(64, 64, bottomCenter, (float) (height * 0.40), spacing, bottomAngle, false);
-        opc.ledStrip(128, 64, bottomCenter, (float) (height * 0.60), spacing, bottomAngle, false);
-        opc.ledStrip(192, 64, bottomCenter, (float) (height * 0.80), spacing, bottomAngle, false);
-        opc.ledStrip(256, 64, topCenter, (float) (height * 0.20), spacing, topAngle, false);
-        opc.ledStrip(320, 64, topCenter, (float) (height * 0.40), spacing, topAngle, false);
-        opc.ledStrip(384, 64, topCenter, (float) (height * 0.60), spacing, topAngle, false);
-        opc.ledStrip(448, 64, topCenter, (float) (height * 0.80), spacing, topAngle, false);
-
+        float center = width/2;
+        float spacing = width / 64;
+        float angle = 0;
+        opc.ledStrip(0, 60, center, (float) (height * 0.11), spacing, angle, false);
+        opc.ledStrip(64, 60, center, (float) (height * 0.22), spacing, angle, false);
+        opc.ledStrip(128, 60, center, (float) (height * 0.33), spacing, angle, false);
+        opc.ledStrip(192, 60, center, (float) (height * 0.44), spacing, angle, false);
+        opc.ledStrip(256, 60, center, (float) (height * 0.55), spacing, angle, false);
+        opc.ledStrip(320, 60, center, (float) (height * 0.66), spacing, angle, false);
+        opc.ledStrip(384, 60, center, (float) (height * 0.77), spacing, angle, false);
+        opc.ledStrip(448, 60, center, (float) (height * 0.88), spacing, angle, false);
 
         // initialize to default state
         state = DEFAULT_ANIMATION;
@@ -178,7 +189,7 @@ public class LightPanelSystem extends PApplet{
 //                drawAudioTransform2();
 //                break;
             default:
-                defaultDraw();
+                fireAnimation.draw();
                 break;
         }
     }
@@ -195,28 +206,6 @@ public class LightPanelSystem extends PApplet{
 
         } catch (Exception e) {
 
-        }
-    }
-
-
-
-    private void defaultDraw()
-    {
-        background(0);
-
-        timerDifference = timerDiff();
-
-        if (timerDifference > 6000) {
-            resetTimer();
-            greenEllipse();
-        } else if (timerDifference > 3000) {
-            blueEllipse();
-        } else if (timerDifference <= 3000){
-            redEllipse();
-        }
-
-        if (msSinceCurrentStateStarted() > ANIMATION_LENGTH) {
-            switchToState(FIRE_ANIMATION);
         }
     }
 
@@ -363,27 +352,6 @@ public class LightPanelSystem extends PApplet{
         fastRainbowFadeAnimation.play();
     }
 
-    private void blueEllipse()
-    {
-        noStroke();
-        fill(0, 0, 255);
-        this.ellipse(width/2, height/2, 100, 100);
-    }
-
-    private void redEllipse()
-    {
-        noStroke();
-        fill(255, 0, 0);
-        ellipse(width/2, height/2, 100, 100);
-    }
-
-    private void greenEllipse()
-    {
-        noStroke();
-        fill(0, 255, 0);
-        ellipse(width/2, height/2, 100, 100);
-    }
-
     private void defaultCleanup()
     {
 
@@ -470,8 +438,7 @@ public class LightPanelSystem extends PApplet{
         } else if (key == 's') {
             switchToState(SPIRAL_ANIMATION);
 //        } else if (key == 'c') {
-//            // switchToState(PSYCH_CUBE_ANIMATION);
-//        }
+//             switchToState(PSYCH_CUBE_ANIMATION);
         } else if (key == 'b') {
             switchToState(BUBBLE_SINE_ANIMATION);
         } else if (key == 'r') {
