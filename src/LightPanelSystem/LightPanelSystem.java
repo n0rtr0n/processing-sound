@@ -3,6 +3,7 @@ package LightPanelSystem;
 import Animations.*;
 import processing.core.PApplet;
 import processing.core.PImage;
+import processing.video.*;
 //import processing.sound.*;
 
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class LightPanelSystem extends PApplet{
 
     ColorWheel colorWheel;
 
+    Capture cam;
+
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
@@ -38,6 +41,8 @@ public class LightPanelSystem extends PApplet{
     final String RAINBOW_SLOW_ANIMATION = "rainbowSlowAnimation";
     final String RAINBOW_FAST_ANIMATION = "rainbowFastAnimation";
     final String TRIPPY_TRIANGLES_ANIMATION = "trippyTrianglesAnimation";
+    final String BLACKOUT = "blackout";
+    final String CAMERA = "camera";
 
     final int ANIMATION_LENGTH = 20 * 1000;
 
@@ -72,6 +77,8 @@ public class LightPanelSystem extends PApplet{
     // Used for smoothing
     float sum;
 
+    boolean whiteLatched = false;
+    boolean redLatched = false;
 
 
     // Audio transform 2
@@ -107,6 +114,8 @@ public class LightPanelSystem extends PApplet{
 
         setupFireAnimation();
 
+
+
         longRainbowFadeAnimation = new LongRainbowFade(this, colorWheel);
         fastRainbowFadeAnimation = new FastRainbowFade(this, colorWheel);
         bubbleSineAnimation = new BubbleSine(this);
@@ -122,6 +131,10 @@ public class LightPanelSystem extends PApplet{
 
         resetTimer();
 
+
+        //TODO: fix error "could not load library: gstreamer"
+        cam = new Capture(this, 800, 200, Capture.list()[1], 30);
+        cam.start();
 
 //        float bottomCenter = width / 4;
 //        float topCenter = width - (width / 4);
@@ -189,6 +202,22 @@ public class LightPanelSystem extends PApplet{
                 break;
             case TRIPPY_TRIANGLES_ANIMATION:
                 trippyTrianglesAnimation.play();
+                break;
+            case BLACKOUT:
+                if (whiteLatched == true) {
+                    background(255, 255, 255);
+                } else if (redLatched == true) {
+                    background(255,0,0);
+                } else {
+                    background(0,0,0);
+                }
+                break;
+            case CAMERA:
+                if(cam.available()) {
+                    cam.read();
+                    //cam.loadPixels();
+                }
+                image(cam, 0, 0);
                 break;
 //            case "audio1":
 //                drawAudioTransform1();
@@ -389,6 +418,8 @@ public class LightPanelSystem extends PApplet{
             case PSYCH_CUBE_ANIMATION:
             case BUBBLE_SINE_ANIMATION:
             case TRIPPY_TRIANGLES_ANIMATION:
+            case BLACKOUT:
+            case CAMERA:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -438,24 +469,61 @@ public class LightPanelSystem extends PApplet{
 
 
     public void keyPressed() {
-        if (key == 'f') {
-            switchToState(FIRE_ANIMATION);
-        } else if (key == '0') {
-            switchToState(DEFAULT_ANIMATION);
-        } else if(key == 'd') {
-            switchToState(DOTS_ANIMATION);
-        } else if (key == 's') {
-            switchToState(SPIRAL_ANIMATION);
-//        } else if (key == 'c') {
-//             switchToState(PSYCH_CUBE_ANIMATION);
-        } else if (key == 'b') {
-            switchToState(BUBBLE_SINE_ANIMATION);
-        } else if (key == 'r') {
-            switchToState(RAINBOW_SLOW_ANIMATION);
-        } else if (key == 'R') {
-            switchToState(RAINBOW_FAST_ANIMATION);
-        } else if (key == 't') {
-            switchToState(TRIPPY_TRIANGLES_ANIMATION);
+
+        switch (key) {
+            case 'f':
+                switchToState(FIRE_ANIMATION);
+                break;
+            case '0':
+                switchToState(DEFAULT_ANIMATION);
+                break;
+            case 'd':
+                switchToState(DOTS_ANIMATION);
+                break;
+            case 's':
+                switchToState(SPIRAL_ANIMATION);
+                break;
+            case 'b':
+                switchToState(BUBBLE_SINE_ANIMATION);
+                break;
+            case 'B':
+                switchToState(BLACKOUT);
+                break;
+            case 'r':
+                if (state == BLACKOUT) {
+                    redLatched = true;
+                } else {
+                    switchToState(RAINBOW_SLOW_ANIMATION);
+                }
+                break;
+            case 'R':
+                switchToState(RAINBOW_FAST_ANIMATION);
+                break;
+            case 't':
+                switchToState(TRIPPY_TRIANGLES_ANIMATION);
+                break;
+            case 'w':
+                if (state == BLACKOUT) {
+                    whiteLatched = true;
+                }
+                break;
+            case 'C':
+                switchToState(CAMERA);
+                break;
+            default:
+                clearLatches();
+                break;
         }
+    }
+
+    public void keyReleased()
+    {
+        clearLatches();
+    }
+
+    public void clearLatches()
+    {
+        whiteLatched = false;
+        redLatched = false;
     }
 }
