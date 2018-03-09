@@ -25,6 +25,7 @@ public class LightPanelSystem extends PApplet{
     FastRainbowFade fastRainbowFadeAnimation;
     BubbleSine bubbleSineAnimation;
     Spiral spiralAnimation;
+    TrippyTriangles trippyTrianglesAnimation;
 
     ColorWheel colorWheel;
 
@@ -36,6 +37,7 @@ public class LightPanelSystem extends PApplet{
     final String BUBBLE_SINE_ANIMATION = "bubbleSineAnimation";
     final String RAINBOW_SLOW_ANIMATION = "rainbowSlowAnimation";
     final String RAINBOW_FAST_ANIMATION = "rainbowFastAnimation";
+    final String TRIPPY_TRIANGLES_ANIMATION = "trippyTrianglesAnimation";
 
     final int ANIMATION_LENGTH = 20 * 1000;
 
@@ -109,6 +111,9 @@ public class LightPanelSystem extends PApplet{
         fastRainbowFadeAnimation = new FastRainbowFade(this, colorWheel);
         bubbleSineAnimation = new BubbleSine(this);
         spiralAnimation = new Spiral(this);
+        trippyTrianglesAnimation = new TrippyTriangles(this);
+
+        trippyTrianglesAnimation.setup();
 
         setuDots();
 //        setupAudioTransform1();
@@ -181,6 +186,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case RAINBOW_FAST_ANIMATION:
                 drawRainbowFastAnimation();
+                break;
+            case TRIPPY_TRIANGLES_ANIMATION:
+                trippyTrianglesAnimation.play();
                 break;
 //            case "audio1":
 //                drawAudioTransform1();
@@ -380,6 +388,7 @@ public class LightPanelSystem extends PApplet{
             case SPIRAL_ANIMATION:
             case PSYCH_CUBE_ANIMATION:
             case BUBBLE_SINE_ANIMATION:
+            case TRIPPY_TRIANGLES_ANIMATION:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -445,6 +454,8 @@ public class LightPanelSystem extends PApplet{
             switchToState(RAINBOW_SLOW_ANIMATION);
         } else if (key == 'R') {
             switchToState(RAINBOW_FAST_ANIMATION);
+        } else if (key == 't') {
+            switchToState(TRIPPY_TRIANGLES_ANIMATION);
         }
     }
 }
