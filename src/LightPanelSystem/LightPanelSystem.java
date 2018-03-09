@@ -27,6 +27,8 @@ public class LightPanelSystem extends PApplet{
     BubbleSine bubbleSineAnimation;
     Spiral spiralAnimation;
     TrippyTriangles trippyTrianglesAnimation;
+    WipeUp wipeUpAnimation;
+    MovieTest movieAnimation;
 
     ColorWheel colorWheel;
 
@@ -43,6 +45,8 @@ public class LightPanelSystem extends PApplet{
     final String TRIPPY_TRIANGLES_ANIMATION = "trippyTrianglesAnimation";
     final String BLACKOUT = "blackout";
     final String CAMERA = "camera";
+    final String WIPE_UP = "wipeUp";
+    final String MOVIE = "movie";
 
     final int ANIMATION_LENGTH = 20 * 1000;
 
@@ -53,7 +57,6 @@ public class LightPanelSystem extends PApplet{
 
 
     boolean stateChangeRequested = false;
-
 
 
     int currentStateStartedAtMs = 0;
@@ -91,9 +94,9 @@ public class LightPanelSystem extends PApplet{
 
 
     // Psych cubes
-    int div=16;
-    int t=0;
-    float du, r;
+//    int div=16;
+//    int t=0;
+//    float du, r;
 
     @Override
     public void settings() {
@@ -121,6 +124,9 @@ public class LightPanelSystem extends PApplet{
         bubbleSineAnimation = new BubbleSine(this);
         spiralAnimation = new Spiral(this);
         trippyTrianglesAnimation = new TrippyTriangles(this);
+        wipeUpAnimation = new WipeUp(this);
+        movieAnimation = new MovieTest(this);
+
 
         trippyTrianglesAnimation.setup();
 
@@ -132,8 +138,8 @@ public class LightPanelSystem extends PApplet{
         resetTimer();
 
 
-        //TODO: fix error "could not load library: gstreamer"
-        cam = new Capture(this, 800, 200, Capture.list()[1], 30);
+        //TODO: make this work if a webcam is not plugged in
+        cam = new Capture(this, Capture.list()[1]);
         cam.start();
 
 //        float bottomCenter = width / 4;
@@ -186,19 +192,19 @@ public class LightPanelSystem extends PApplet{
                 drawDots();
                 break;
             case SPIRAL_ANIMATION:
-                drawSpiralAnimation();
+                spiralAnimation.play();
                 break;
             case PSYCH_CUBE_ANIMATION:
                 drawPsychCubeAnimation();
                 break;
             case BUBBLE_SINE_ANIMATION:
-                drawBubbleSineAnimation();
+                bubbleSineAnimation.play();
                 break;
             case RAINBOW_SLOW_ANIMATION:
-                drawRainbowSlowAnimation();
+                longRainbowFadeAnimation.play();
                 break;
             case RAINBOW_FAST_ANIMATION:
-                drawRainbowFastAnimation();
+                fastRainbowFadeAnimation.play();
                 break;
             case TRIPPY_TRIANGLES_ANIMATION:
                 trippyTrianglesAnimation.play();
@@ -218,6 +224,12 @@ public class LightPanelSystem extends PApplet{
                     //cam.loadPixels();
                 }
                 image(cam, 0, 0);
+                break;
+            case WIPE_UP:
+                wipeUpAnimation.play();
+                break;
+            case MOVIE:
+                movieAnimation.play();
                 break;
 //            case "audio1":
 //                drawAudioTransform1();
@@ -330,63 +342,43 @@ public class LightPanelSystem extends PApplet{
 //        }
 //    }
 
-    private void drawSpiralAnimation()
-    {
-        spiralAnimation.play();
-    }
-
     private void drawPsychCubeAnimation()
     {
-        t++;
-        background(t%256, 255, 192+64*cos(t*PI/12));
-
-        translate(width/2, height/2, -du);
-
-        rotateZ(t*PI/360);
-        for (int k=0; k<14; k++) {
-            rotateZ(t * PI / 1200);
-
-            for (int i = 0; i < div; i++) {
-                rotateZ(2 * PI / div);
-
-                pushMatrix();
-                translate(k * r, (float) (1.2 * r + k * k * r * 0.25), 0);
-
-                //立方体
-                pushMatrix();
-                rotateY(k * 2 * PI / div + t * PI / 48);
-                fill(i * 255 / div, 216, 216, 128);
-                strokeWeight(du / 384);
-                stroke(255, 48);
-                box((float) (r * 1.56 + k * r / 2.6));
-                popMatrix();
-
-                //直線
-                pushMatrix();
-                translate(0, 0, du / 4);
-                strokeWeight(du / 280);
-                stroke(255, 56);
-                line(0, 0, 0, -16 * du);
-                popMatrix();
-
-                popMatrix();
-            }
-        }
-    }
-
-    private void drawBubbleSineAnimation()
-    {
-        bubbleSineAnimation.play();
-    }
-
-    private void drawRainbowSlowAnimation()
-    {
-        longRainbowFadeAnimation.play();
-    }
-
-    private void drawRainbowFastAnimation()
-    {
-        fastRainbowFadeAnimation.play();
+//        t++;
+//        background(t%256, 255, 192+64*cos(t*PI/12));
+//
+//        translate(width/2, height/2, -du);
+//
+//        rotateZ(t*PI/360);
+//        for (int k=0; k<14; k++) {
+//            rotateZ(t * PI / 1200);
+//
+//            for (int i = 0; i < div; i++) {
+//                rotateZ(2 * PI / div);
+//
+//                pushMatrix();
+//                translate(k * r, (float) (1.2 * r + k * k * r * 0.25), 0);
+//
+//                //立方体
+//                pushMatrix();
+//                rotateY(k * 2 * PI / div + t * PI / 48);
+//                fill(i * 255 / div, 216, 216, 128);
+//                strokeWeight(du / 384);
+//                stroke(255, 48);
+//                box((float) (r * 1.56 + k * r / 2.6));
+//                popMatrix();
+//
+//                //直線
+//                pushMatrix();
+//                translate(0, 0, du / 4);
+//                strokeWeight(du / 280);
+//                stroke(255, 56);
+//                line(0, 0, 0, -16 * du);
+//                popMatrix();
+//
+//                popMatrix();
+//            }
+//        }
     }
 
     private void defaultCleanup()
@@ -420,6 +412,8 @@ public class LightPanelSystem extends PApplet{
             case TRIPPY_TRIANGLES_ANIMATION:
             case BLACKOUT:
             case CAMERA:
+            case WIPE_UP:
+            case MOVIE:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -467,7 +461,6 @@ public class LightPanelSystem extends PApplet{
         }
     }
 
-
     public void keyPressed() {
 
         switch (key) {
@@ -509,6 +502,17 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'C':
                 switchToState(CAMERA);
+                break;
+            case 'W':
+                switchToState(WIPE_UP);
+                break;
+            case 'n':
+                if (state == WIPE_UP) {
+                    wipeUpAnimation.initiateWipeUp();
+                }
+                break;
+            case 'm':
+                switchToState(MOVIE);
                 break;
             default:
                 clearLatches();
