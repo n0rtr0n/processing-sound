@@ -504,6 +504,7 @@ public class LightPanelSystem extends PApplet{
                 switchToState(CAMERA);
                 break;
             case 'W':
+                wipeUpAnimation.prepare();
                 switchToState(WIPE_UP);
                 break;
             case 'n':
