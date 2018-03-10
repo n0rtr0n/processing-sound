@@ -139,8 +139,8 @@ public class LightPanelSystem extends PApplet{
 
 
         //TODO: make this work if a webcam is not plugged in
-        cam = new Capture(this, Capture.list()[1]);
-        cam.start();
+//        cam = new Capture(this, Capture.list()[1]);
+//        cam.start();
 
 //        float bottomCenter = width / 4;
 //        float topCenter = width - (width / 4);

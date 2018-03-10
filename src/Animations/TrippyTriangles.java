@@ -9,7 +9,7 @@ public class TrippyTriangles implements Animation {
 
     private LightPanelSystem applet;
 
-    final int NB_PARTICLES = 100;
+    final int NB_PARTICLES = 130;
     ArrayList<Triangle> triangles;
     Particle[] parts = new Particle[NB_PARTICLES];
     MyColor myColor;
@@ -33,8 +33,8 @@ public class TrippyTriangles implements Animation {
     {
         myColor.update();
         applet.noStroke();
-        applet.fill(120, 1);
-        applet.background(50);
+        applet.fill(0);
+        applet.background(0);
         triangles = new ArrayList<Triangle>();
         Particle p1, p2;
 
@@ -68,8 +68,8 @@ public class TrippyTriangles implements Animation {
     void drawTriangles()
     {
         applet.noStroke();
-        applet.fill(myColor.R, myColor.G, myColor.B, 13);
-        applet.stroke(Math.max(myColor.R-15, 0), Math.max(myColor.G-15, 0), Math.max(myColor.B-15, 0), 13);
+        applet.fill(myColor.R, myColor.G, myColor.B, 60);
+        applet.stroke(Math.max(myColor.R-15, 0), Math.max(myColor.G-15, 0), Math.max(myColor.B-15, 0), 60);
         //noFill();
         applet.beginShape(PConstants.TRIANGLES);
         for (int i = 0; i < triangles.size(); i ++)
@@ -179,7 +179,7 @@ class Particle
 
     public void display()
     {
-        applet.fill(255, 14);
+        applet.fill(255, 25);
         applet.ellipse(pos.x, pos.y, RAD, RAD);
     }
 }
