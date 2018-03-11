@@ -1,14 +1,17 @@
 package Animations;
 
+import java.awt.*;
+
 public class ColorWheel {
 
     private int red, green, blue;
 
     private int lastColorChangeAt;
 
-    public void setRed(int red)
+    public ColorWheel setRed(int red)
     {
         this.red = red;
+        return this;
     }
 
     public int getRed()
@@ -16,9 +19,10 @@ public class ColorWheel {
         return this.red;
     }
 
-    public void setGreen(int green)
+    public ColorWheel setGreen(int green)
     {
         this.green = green;
+        return this;
     }
 
     public int getGreen()
@@ -26,9 +30,10 @@ public class ColorWheel {
         return this.green;
     }
 
-    public void setBlue(int blue)
+    public ColorWheel setBlue(int blue)
     {
         this.blue = blue;
+        return this;
     }
 
     public int getBlue()

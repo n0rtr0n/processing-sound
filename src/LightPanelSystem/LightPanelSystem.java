@@ -411,7 +411,7 @@ public class LightPanelSystem extends PApplet{
             case BUBBLE_SINE_ANIMATION:
             case TRIPPY_TRIANGLES_ANIMATION:
             case BLACKOUT:
-            case CAMERA:
+            //case CAMERA:
             case WIPE_UP:
             case MOVIE:
                 colorMode(RGB);
@@ -476,7 +476,7 @@ public class LightPanelSystem extends PApplet{
             case 's':
                 switchToState(SPIRAL_ANIMATION);
                 break;
-            case 'b':
+            case 'S':
                 switchToState(BUBBLE_SINE_ANIMATION);
                 break;
             case 'B':
@@ -495,7 +495,7 @@ public class LightPanelSystem extends PApplet{
             case 't':
                 switchToState(TRIPPY_TRIANGLES_ANIMATION);
                 break;
-            case 'w':
+            case 'b':
                 if (state == BLACKOUT) {
                     whiteLatched = true;
                 }
