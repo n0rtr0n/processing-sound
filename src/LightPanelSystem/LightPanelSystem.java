@@ -8,6 +8,7 @@ import processing.video.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 
 import com.sun.net.httpserver.HttpExchange;
@@ -17,6 +18,11 @@ public class LightPanelSystem extends PApplet{
 
     // OpenPixelControl client
     OPC opc;
+
+    Animation previousAnimation;
+    Animation currentAnimtion;
+
+    ArrayList<Animation> animations;
 
     // state management
     String state;
@@ -115,10 +121,7 @@ public class LightPanelSystem extends PApplet{
         // Connect to the local instance of fcserver
         opc = new OPC(this, "127.0.0.1", 7890);
 
-        setupFireAnimation();
-
-
-
+        fireAnimation = new FireAnimation(this);
         longRainbowFadeAnimation = new LongRainbowFade(this, colorWheel);
         fastRainbowFadeAnimation = new FastRainbowFade(this, colorWheel);
         bubbleSineAnimation = new BubbleSine(this);
@@ -127,6 +130,13 @@ public class LightPanelSystem extends PApplet{
         wipeUpAnimation = new WipeUp(this);
         movieAnimation = new MovieTest(this);
 
+        animations.add(longRainbowFadeAnimation);
+        animations.add(fastRainbowFadeAnimation);
+        animations.add(bubbleSineAnimation);
+        animations.add(spiralAnimation);
+        animations.add(trippyTrianglesAnimation);
+        animations.add(wipeUpAnimation);
+        animations.add(movieAnimation);
 
         trippyTrianglesAnimation.setup();
 
@@ -179,6 +189,8 @@ public class LightPanelSystem extends PApplet{
 
     @Override
     public void draw() {
+
+        //currentAnimation.play();
 
         switch(state) {
             case DEFAULT_ANIMATION:
@@ -256,12 +268,6 @@ public class LightPanelSystem extends PApplet{
         } catch (Exception e) {
 
         }
-    }
-
-    private void setupFireAnimation()
-    {
-        fireAnimation = new FireAnimation(this);
-        fireAnimation.setup("flames.jpeg");
     }
 
     private void setuDots()

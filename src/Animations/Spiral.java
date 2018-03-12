@@ -55,4 +55,19 @@ public class Spiral implements Animation {
         rot -= 0.01f; //(float)(mouseY - centY) / ((float) height * 10.0f);
     }
 
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
+
 }

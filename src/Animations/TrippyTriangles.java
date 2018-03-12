@@ -20,15 +20,6 @@ public class TrippyTriangles implements Animation {
         this.myColor = new MyColor(this.applet);
     }
 
-
-    public void setup()
-    {
-        for (int i = 0; i < NB_PARTICLES; i++)
-        {
-            parts[i] = new Particle(this.applet);
-        }
-    }
-
     public void play()
     {
         myColor.update();
@@ -93,6 +84,24 @@ public class TrippyTriangles implements Animation {
                 }
             }
         }
+    }
+
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+        for (int i = 0; i < NB_PARTICLES; i++)
+        {
+            parts[i] = new Particle(this.applet);
+        }
+    }
+
+    public void cleanup()
+    {
+
     }
 
 }

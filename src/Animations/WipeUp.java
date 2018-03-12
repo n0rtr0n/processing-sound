@@ -70,6 +70,21 @@ public class WipeUp implements Animation{
 //        }
     }
 
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
+
     public void initiateWipeUp()
     {
         wipeUpInitialized = true;

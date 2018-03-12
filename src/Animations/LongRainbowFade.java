@@ -25,4 +25,19 @@ public class LongRainbowFade implements Animation{
         }
         applet.background(colorWheel.getRed(), 255, 255);
     }
+
+    public ColorMode getColorMode()
+    {
+        return ColorMode.HSV;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
 }

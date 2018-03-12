@@ -19,6 +19,21 @@ public class PerlinNoise implements Animation {
 
     }
 
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
+
     private class Particle {
         PVector dir;
         PVector vel;

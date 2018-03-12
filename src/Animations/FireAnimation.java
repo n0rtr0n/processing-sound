@@ -11,6 +11,7 @@ public class FireAnimation implements Animation {
 
     public FireAnimation(LightPanelSystem applet)
     {
+        fireImage = applet.loadImage("flames.jpeg");
         this.applet = applet;
     }
 
@@ -37,5 +38,20 @@ public class FireAnimation implements Animation {
         // Use two copies of the image, so it seems to repeat infinitely
         applet.image(fireImage, 0, y, applet.width, imHeight);
         applet.image(fireImage, 0, y + imHeight, applet.width, imHeight);
+    }
+
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
     }
 }

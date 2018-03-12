@@ -82,4 +82,20 @@ public class BubbleSine implements Animation {
 
         }
     }
+
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
+
 }

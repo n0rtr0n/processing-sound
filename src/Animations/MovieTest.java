@@ -23,4 +23,18 @@ public class MovieTest implements Animation {
         applet.image(movie, 0, (int) ((.5 * applet.height) - (movie.height / 2)));
     }
 
+    public ColorMode getColorMode()
+    {
+        return ColorMode.RGB;
+    }
+
+    public void setup()
+    {
+
+    }
+
+    public void cleanup()
+    {
+
+    }
 }

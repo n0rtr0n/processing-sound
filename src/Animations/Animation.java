@@ -5,8 +5,12 @@ import java.util.ArrayList;
 public interface Animation {
     public void play();
 
-    // TODO: register animationKey
+    public ColorMode getColorMode();
+
+    public void setup();
+
+    public void cleanup();
+
+    // TODO: register animation keys
     // TODO: display driver
-    // TODO: color mode
-    // TODO: cleanup tasks
 }
