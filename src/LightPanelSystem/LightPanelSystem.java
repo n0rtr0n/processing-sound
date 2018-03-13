@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import hype.*;
+
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -35,6 +37,7 @@ public class LightPanelSystem extends PApplet{
     TrippyTriangles trippyTrianglesAnimation;
     WipeUp wipeUpAnimation;
     MovieTest movieAnimation;
+    HypeTest hypeTestAnimation;
 
     ColorWheel colorWheel;
 
@@ -53,6 +56,7 @@ public class LightPanelSystem extends PApplet{
     final String CAMERA = "camera";
     final String WIPE_UP = "wipeUp";
     final String MOVIE = "movie";
+    final String HYPE_TEST = "hypeTest";
 
     final int ANIMATION_LENGTH = 20 * 1000;
 
@@ -129,6 +133,9 @@ public class LightPanelSystem extends PApplet{
         trippyTrianglesAnimation = new TrippyTriangles(this);
         wipeUpAnimation = new WipeUp(this);
         movieAnimation = new MovieTest(this);
+        hypeTestAnimation = new HypeTest(this);
+
+        animations = new ArrayList<Animation>();
 
         animations.add(longRainbowFadeAnimation);
         animations.add(fastRainbowFadeAnimation);
@@ -137,8 +144,13 @@ public class LightPanelSystem extends PApplet{
         animations.add(trippyTrianglesAnimation);
         animations.add(wipeUpAnimation);
         animations.add(movieAnimation);
+        animations.add(hypeTestAnimation);
 
-        trippyTrianglesAnimation.setup();
+        H.init(this);
+
+        for (Animation animation : animations) {
+            animation.setup();
+        }
 
         setuDots();
 //        setupAudioTransform1();
@@ -220,6 +232,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case TRIPPY_TRIANGLES_ANIMATION:
                 trippyTrianglesAnimation.play();
+                break;
+            case HYPE_TEST:
+                hypeTestAnimation.play();
                 break;
             case BLACKOUT:
                 if (whiteLatched == true) {
@@ -420,6 +435,7 @@ public class LightPanelSystem extends PApplet{
             //case CAMERA:
             case WIPE_UP:
             case MOVIE:
+            case HYPE_TEST:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -520,6 +536,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'm':
                 switchToState(MOVIE);
+                break;
+            case 'h':
+                switchToState(HYPE_TEST);
                 break;
             default:
                 clearLatches();
