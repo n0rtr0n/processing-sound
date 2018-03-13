@@ -7,6 +7,8 @@ public interface Animation {
 
     public ColorMode getColorMode();
 
+    public void prepare();
+
     public void setup();
 
     public void cleanup();

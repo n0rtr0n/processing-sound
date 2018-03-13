@@ -32,27 +32,32 @@ public class HypeTest implements Animation {
 
         d2 = new HRect();
         d2.size(50)
-                .rotation(45)
-                .anchorAt(H.CENTER)
-                .loc(200, applet.height / 2);
+            .rotation(45)
+            .anchorAt(H.CENTER)
+            .loc(200, applet.height / 2);
         HRotate r2 = new HRotate().target(d2).speedZ(1);
         H.add(d2);
 
         d3 = new HRect();
         d3.size(50)
-                .rotation(45)
-                .anchorAt(H.CENTER)
-                .loc(300, applet.height / 2);
+            .rotation(45)
+            .anchorAt(H.CENTER)
+            .loc(300, applet.height / 2);
         HRotate r3 = new HRotate().target(d3).speedZ(2);
         H.add(d3);
 
         d4 = new HRect();
         d4.size(50)
-                .rotation(45)
-                .anchorAt(H.CENTER)
-                .loc(400, applet.height / 2);
+            .rotation(45)
+            .anchorAt(H.CENTER)
+            .loc(400, applet.height / 2);
         HRotate r4 = new HRotate().target(d4).speedZ(3);
         H.add(d4);
+    }
+
+    public void prepare()
+    {
+
     }
 
     public void cleanup() {

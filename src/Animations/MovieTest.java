@@ -11,8 +11,7 @@ public class MovieTest implements Animation {
     public MovieTest (LightPanelSystem applet)
     {
         this.applet = applet;
-        movie = new Movie(this.applet, "RoadTrip.mp4");
-        movie.loop();
+
     }
 
     public void play()
@@ -30,11 +29,16 @@ public class MovieTest implements Animation {
 
     public void setup()
     {
+        movie = new Movie(this.applet, "RoadTrip.mp4");
+    }
 
+    public void prepare()
+    {
+        movie.loop();
     }
 
     public void cleanup()
     {
-
+        movie.stop();
     }
 }

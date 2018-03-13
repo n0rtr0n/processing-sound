@@ -65,6 +65,11 @@ public class Spiral implements Animation {
 
     }
 
+    public void prepare()
+    {
+
+    }
+
     public void cleanup()
     {
 

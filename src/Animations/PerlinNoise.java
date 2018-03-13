@@ -29,6 +29,11 @@ public class PerlinNoise implements Animation {
 
     }
 
+    public void prepare()
+    {
+
+    }
+
     public void cleanup()
     {
 

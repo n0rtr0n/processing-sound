@@ -2,13 +2,11 @@ package LightPanelSystem;
 
 import Animations.*;
 import processing.core.PApplet;
-import processing.core.PImage;
-import processing.video.*;
-//import processing.sound.*;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import hype.*;
 
@@ -22,27 +20,23 @@ public class LightPanelSystem extends PApplet{
     OPC opc;
 
     Animation previousAnimation;
-    Animation currentAnimtion;
+    Animation currentAnimation;
 
-    ArrayList<Animation> animations;
+    Map<String, Animation> animations;
 
     // state management
     String state;
     String previousState;
-    FireAnimation fireAnimation;
-    LongRainbowFade longRainbowFadeAnimation;
-    FastRainbowFade fastRainbowFadeAnimation;
-    BubbleSine bubbleSineAnimation;
-    Spiral spiralAnimation;
-    TrippyTriangles trippyTrianglesAnimation;
     WipeUp wipeUpAnimation;
-    MovieTest movieAnimation;
-    HypeTest hypeTestAnimation;
 
     ColorWheel colorWheel;
 
-    Capture cam;
 
+    // TODO: register strings automatically
+    // TODO: register keys automatically
+    // TODO: register button modifiers
+    // TODO: HTTP server / websocket
+    // TODO: Implement blackout, audio transform animations
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
@@ -58,55 +52,15 @@ public class LightPanelSystem extends PApplet{
     final String MOVIE = "movie";
     final String HYPE_TEST = "hypeTest";
 
-    final int ANIMATION_LENGTH = 20 * 1000;
-
-    boolean fireAnimationInitialized = false;
-    boolean dotsInitialized = false;
-    boolean audioTransform1Initialized = false;
-    boolean initialized = false;
-
-
-    boolean stateChangeRequested = false;
-
-
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
     int timerDifference = 0;
 
-    // Declare the processing sound variables
-//    SoundFile sample;
-//    Amplitude rms;
-//    AudioIn in;
 
-
-    // Audio transform 1
-
-    // Declare a scaling factor
-    float scale = 5.0f;
-
-    // Declare a smooth factor
-    float smoothFactor = 0.25f;
-
-    // Used for smoothing
-    float sum;
 
     boolean whiteLatched = false;
     boolean redLatched = false;
 
-
-    // Audio transform 2
-//    FFT fft;
-//    int bands = 512;
-//    float[] spectrum = new float[bands];
-
-    // Dots
-    PImage dot;
-
-
-    // Psych cubes
-//    int div=16;
-//    int t=0;
-//    float du, r;
 
     @Override
     public void settings() {
@@ -125,44 +79,26 @@ public class LightPanelSystem extends PApplet{
         // Connect to the local instance of fcserver
         opc = new OPC(this, "127.0.0.1", 7890);
 
-        fireAnimation = new FireAnimation(this);
-        longRainbowFadeAnimation = new LongRainbowFade(this, colorWheel);
-        fastRainbowFadeAnimation = new FastRainbowFade(this, colorWheel);
-        bubbleSineAnimation = new BubbleSine(this);
-        spiralAnimation = new Spiral(this);
-        trippyTrianglesAnimation = new TrippyTriangles(this);
-        wipeUpAnimation = new WipeUp(this);
-        movieAnimation = new MovieTest(this);
-        hypeTestAnimation = new HypeTest(this);
+        animations = new HashMap<String, Animation>();
 
-        animations = new ArrayList<Animation>();
-
-        animations.add(longRainbowFadeAnimation);
-        animations.add(fastRainbowFadeAnimation);
-        animations.add(bubbleSineAnimation);
-        animations.add(spiralAnimation);
-        animations.add(trippyTrianglesAnimation);
-        animations.add(wipeUpAnimation);
-        animations.add(movieAnimation);
-        animations.add(hypeTestAnimation);
+        animations.put(FIRE_ANIMATION, new FireAnimation(this));
+        animations.put(RAINBOW_SLOW_ANIMATION, new LongRainbowFade(this, colorWheel));
+        animations.put(RAINBOW_FAST_ANIMATION, new FastRainbowFade(this, colorWheel));
+        animations.put(DOTS_ANIMATION, new Dots(this));
+        animations.put(BUBBLE_SINE_ANIMATION, new BubbleSine(this));
+        animations.put(SPIRAL_ANIMATION, new Spiral(this));
+        animations.put(TRIPPY_TRIANGLES_ANIMATION, new TrippyTriangles(this));
+        animations.put(WIPE_UP,  new WipeUp(this));
+        animations.put(MOVIE, new MovieTest(this));
+        animations.put(HYPE_TEST, new HypeTest(this));
 
         H.init(this);
 
-        for (Animation animation : animations) {
-            animation.setup();
+        for (Map.Entry<String, Animation>  animation : animations.entrySet()) {
+            animation.getValue().setup();
         }
 
-        setuDots();
-//        setupAudioTransform1();
-//        setupAudioTransform2();
-        setupPsychCubes();
-
         resetTimer();
-
-
-        //TODO: make this work if a webcam is not plugged in
-//        cam = new Capture(this, Capture.list()[1]);
-//        cam.start();
 
 //        float bottomCenter = width / 4;
 //        float topCenter = width - (width / 4);
@@ -196,78 +132,23 @@ public class LightPanelSystem extends PApplet{
         state = DEFAULT_ANIMATION;
 
         currentStateStartedAtMs = millis();
-
+        currentAnimation = animations.get(FIRE_ANIMATION);
+        currentAnimation.prepare();
     }
 
     @Override
     public void draw() {
 
-        //currentAnimation.play();
+        currentAnimation.play();
 
-        switch(state) {
-            case DEFAULT_ANIMATION:
-                //defaultDraw();
-                fireAnimation.draw(); // setting fire animation to default for now
-                break;
-            case FIRE_ANIMATION:
-                fireAnimation.draw();
-                break;
-            case DOTS_ANIMATION:
-                drawDots();
-                break;
-            case SPIRAL_ANIMATION:
-                spiralAnimation.play();
-                break;
-            case PSYCH_CUBE_ANIMATION:
-                drawPsychCubeAnimation();
-                break;
-            case BUBBLE_SINE_ANIMATION:
-                bubbleSineAnimation.play();
-                break;
-            case RAINBOW_SLOW_ANIMATION:
-                longRainbowFadeAnimation.play();
-                break;
-            case RAINBOW_FAST_ANIMATION:
-                fastRainbowFadeAnimation.play();
-                break;
-            case TRIPPY_TRIANGLES_ANIMATION:
-                trippyTrianglesAnimation.play();
-                break;
-            case HYPE_TEST:
-                hypeTestAnimation.play();
-                break;
-            case BLACKOUT:
-                if (whiteLatched == true) {
-                    background(255, 255, 255);
-                } else if (redLatched == true) {
-                    background(255,0,0);
-                } else {
-                    background(0,0,0);
-                }
-                break;
-            case CAMERA:
-                if(cam.available()) {
-                    cam.read();
-                    //cam.loadPixels();
-                }
-                image(cam, 0, 0);
-                break;
-            case WIPE_UP:
-                wipeUpAnimation.play();
-                break;
-            case MOVIE:
-                movieAnimation.play();
-                break;
-//            case "audio1":
-//                drawAudioTransform1();
-//                break;
-//            case "audio2":
-//                drawAudioTransform2();
-//                break;
-            default:
-                fireAnimation.draw();
-                break;
-        }
+//            case BLACKOUT:
+//                if (whiteLatched == true) {
+//                    background(255, 255, 255);
+//                } else if (redLatched == true) {
+//                    background(255,0,0);
+//                } else {
+//                    background(0,0,0);
+//                }
     }
 
     public static void main (String... args) {
@@ -285,139 +166,10 @@ public class LightPanelSystem extends PApplet{
         }
     }
 
-    private void setuDots()
-    {
-        // Load a sample image
-        dot = loadImage("color-dot.png");
-    }
-
-    private void setupAudioTransform1()
-    {
-        // TODO: only load when switched to
-        //Load and play a soundfile and loop it
-//        sample = new SoundFile(this, "TessellatedEscher.mp3");
-//        sample.loop();
-
-        // Create and patch the rms tracker
-//        rms = new Amplitude(this);
-//        rms.input(sample);
-    }
-
-//    private void setupAudioTransform2()
-//    {
-//        // Create an Input stream which is routed into the Amplitude analyzer
-//        fft = new FFT(this, bands);
-//        in = new AudioIn(this, 0);
-//
-//        // start the Audio Input
-//        in.start();
-//
-//        // patch the AudioIn
-//        fft.input(in);
-//    }
-
-    private void setupPsychCubes()
-    {
-        float du = max(width, height)/2;
-        float r = du/16;
-    }
-
-    private void drawDots()
-    {
-        background(0);
-
-        // Draw the image, centered at the mouse location
-        double dotSize = width * 0.2;
-        image(dot, (float) (mouseX - dotSize / 2) , (float) (mouseY - dotSize / 2), (float) dotSize, (float) dotSize);
-    }
-
-//    private void drawAudioTransform1()
-//    {
-//        // Set background color, noStroke and fill color
-//        background(0, 0, 255);
-//        noStroke();
-//        fill(255, 0, 150);
-//
-//        // Smooth the rms data by smoothing factor
-//        sum += (rms.analyze() - sum) * smoothFactor;
-//
-//        // rms.analyze() return a value between 0 and 1. It's
-//        // scaled to height/2 and then multiplied by a scale factor
-//        float rmsScaled = sum * (height/2) * scale;
-//
-//        // Draw an ellipse at a size based on the audio analysis
-//        ellipse(width/2, height/2, rmsScaled, rmsScaled);
-//    }
-//
-//    private void drawAudioTransform2()
-//    {
-//        background(0);
-//
-//        fft.analyze(spectrum);
-//
-//        for(int i = 0; i < bands; i++){
-//            // The result of the FFT is normalized
-//            // draw the line for frequency band i scaling it up by 5 to get more amplitude.
-//            stroke(255);
-//            line( i, height, i * 2, height - spectrum[i] * height * 15 );
-//        }
-//    }
-
-    private void drawPsychCubeAnimation()
-    {
-//        t++;
-//        background(t%256, 255, 192+64*cos(t*PI/12));
-//
-//        translate(width/2, height/2, -du);
-//
-//        rotateZ(t*PI/360);
-//        for (int k=0; k<14; k++) {
-//            rotateZ(t * PI / 1200);
-//
-//            for (int i = 0; i < div; i++) {
-//                rotateZ(2 * PI / div);
-//
-//                pushMatrix();
-//                translate(k * r, (float) (1.2 * r + k * k * r * 0.25), 0);
-//
-//                //立方体
-//                pushMatrix();
-//                rotateY(k * 2 * PI / div + t * PI / 48);
-//                fill(i * 255 / div, 216, 216, 128);
-//                strokeWeight(du / 384);
-//                stroke(255, 48);
-//                box((float) (r * 1.56 + k * r / 2.6));
-//                popMatrix();
-//
-//                //直線
-//                pushMatrix();
-//                translate(0, 0, du / 4);
-//                strokeWeight(du / 280);
-//                stroke(255, 56);
-//                line(0, 0, 0, -16 * du);
-//                popMatrix();
-//
-//                popMatrix();
-//            }
-//        }
-    }
-
-    private void defaultCleanup()
-    {
-
-    }
-
     private void switchToState(String newState)
     {
         if (state == newState) {
             return;
-        }
-
-        // clean up old state
-        switch (state) {
-            default:
-                defaultCleanup();
-                break;
         }
 
         currentStateStartedAtMs = millis();
@@ -449,6 +201,10 @@ public class LightPanelSystem extends PApplet{
 
         previousState = state;
         state = newState;
+        previousAnimation = currentAnimation;
+        previousAnimation.cleanup();
+        currentAnimation = animations.get(newState);
+        currentAnimation.prepare();
     }
 
     private int timerDiff()

@@ -99,6 +99,11 @@ public class TrippyTriangles implements Animation {
         }
     }
 
+    public void prepare()
+    {
+
+    }
+
     public void cleanup()
     {
 

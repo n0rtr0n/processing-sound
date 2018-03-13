@@ -25,6 +25,11 @@ public class Skeleton implements Animation {
 
     }
 
+    public void prepare()
+    {
+
+    }
+
     public void cleanup()
     {
 

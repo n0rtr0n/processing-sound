@@ -27,19 +27,6 @@ public class WipeUp implements Animation{
         colors = new ArrayList<ColorWheel>();
     }
 
-    public void prepare()
-    {
-        x = 0.0f;
-        y = 0.0f;
-        currentColorIndex = 0;
-        maxX = applet.width + applet.height;
-        maxY = applet.width + applet.height;
-        msSinceLastWipe = 0;
-        colors.add((new ColorWheel()).setRed(255).setBlue(0).setGreen(0));
-        colors.add((new ColorWheel()).setRed(0).setBlue(255).setGreen(0));
-        colors.add((new ColorWheel()).setRed(0).setBlue(0).setGreen(255));
-    }
-
     public void play()
     {
         currentColor = colors.get(currentColorIndex);
@@ -78,6 +65,19 @@ public class WipeUp implements Animation{
     public void setup()
     {
 
+    }
+
+    public void prepare()
+    {
+        x = 0.0f;
+        y = 0.0f;
+        currentColorIndex = 0;
+        maxX = applet.width + applet.height;
+        maxY = applet.width + applet.height;
+        msSinceLastWipe = 0;
+        colors.add((new ColorWheel()).setRed(255).setBlue(0).setGreen(0));
+        colors.add((new ColorWheel()).setRed(0).setBlue(255).setGreen(0));
+        colors.add((new ColorWheel()).setRed(0).setBlue(0).setGreen(255));
     }
 
     public void cleanup()

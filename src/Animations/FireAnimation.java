@@ -23,11 +23,6 @@ public class FireAnimation implements Animation {
 
     public void play()
     {
-
-    }
-
-    public void draw()
-    {
         // Scale the image so that it matches the width of the window
         int imHeight = fireImage.height * applet.width / fireImage.width;
 
@@ -46,6 +41,11 @@ public class FireAnimation implements Animation {
     }
 
     public void setup()
+    {
+
+    }
+
+    public void prepare()
     {
 
     }
