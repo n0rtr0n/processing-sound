@@ -37,6 +37,8 @@ public class LightPanelSystem extends PApplet{
     // TODO: register button modifiers
     // TODO: HTTP server / websocket
     // TODO: Implement blackout, audio transform animations
+    final String AUDIO_ANIMATION_1 = "audioAnimation1";
+    final String AUDIO_ANIMATION_2 = "audioAnimation2";
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
@@ -81,6 +83,8 @@ public class LightPanelSystem extends PApplet{
 
         animations = new HashMap<String, Animation>();
 
+        animations.put(AUDIO_ANIMATION_1, new AudioTest1(this));
+        animations.put(AUDIO_ANIMATION_2, new AudioTest2(this));
         animations.put(FIRE_ANIMATION, new FireAnimation(this));
         animations.put(RAINBOW_SLOW_ANIMATION, new LongRainbowFade(this, colorWheel));
         animations.put(RAINBOW_FAST_ANIMATION, new FastRainbowFade(this, colorWheel));
@@ -116,7 +120,7 @@ public class LightPanelSystem extends PApplet{
 //        opc.ledStrip(384, 64, topCenter, (float) (height * 0.60), spacing, topAngle, false);
 //        opc.ledStrip(448, 64, topCenter, (float) (height * 0.80), spacing, topAngle, false);
 
-        float center = width/2;
+        float center = width / 2;
         float spacing = width / 64;
         float angle = 0;
         opc.ledStrip(0, 60, center, (float) (height * 0.11), spacing, angle, false);
@@ -188,6 +192,8 @@ public class LightPanelSystem extends PApplet{
             case WIPE_UP:
             case MOVIE:
             case HYPE_TEST:
+            case AUDIO_ANIMATION_1:
+            case AUDIO_ANIMATION_2:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -295,6 +301,12 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'h':
                 switchToState(HYPE_TEST);
+                break;
+            case 'u':
+                switchToState(AUDIO_ANIMATION_1);
+                break;
+            case 'v':
+                switchToState(AUDIO_ANIMATION_2);
                 break;
             default:
                 clearLatches();
