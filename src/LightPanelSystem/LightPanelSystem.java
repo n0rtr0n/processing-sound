@@ -49,6 +49,7 @@ public class LightPanelSystem extends PApplet{
     final String RAINBOW_FAST_ANIMATION = "rainbowFastAnimation";
     final String TRIPPY_TRIANGLES_ANIMATION = "trippyTrianglesAnimation";
     final String BLACKOUT = "blackout";
+    final String PERLIN_NOISE_ANIMATION = "perlinNoiseAnimation";
     final String CAMERA = "camera";
     final String WIPE_UP = "wipeUp";
     final String MOVIE = "movie";
@@ -58,10 +59,8 @@ public class LightPanelSystem extends PApplet{
     int currentTimerMillis = 0;
     int timerDifference = 0;
 
-
-
-    boolean whiteLatched = false;
-    boolean redLatched = false;
+    public boolean whiteLatched = false;
+    public boolean redLatched = false;
 
 
     @Override
@@ -95,6 +94,7 @@ public class LightPanelSystem extends PApplet{
         animations.put(WIPE_UP,  new WipeUp(this));
         animations.put(MOVIE, new MovieTest(this));
         animations.put(HYPE_TEST, new HypeTest(this));
+        animations.put(PERLIN_NOISE_ANIMATION, new PerlinNoise(this));
 
         H.init(this);
 
@@ -142,17 +142,7 @@ public class LightPanelSystem extends PApplet{
 
     @Override
     public void draw() {
-
         currentAnimation.play();
-
-//            case BLACKOUT:
-//                if (whiteLatched == true) {
-//                    background(255, 255, 255);
-//                } else if (redLatched == true) {
-//                    background(255,0,0);
-//                } else {
-//                    background(0,0,0);
-//                }
     }
 
     public static void main (String... args) {
@@ -194,6 +184,7 @@ public class LightPanelSystem extends PApplet{
             case HYPE_TEST:
             case AUDIO_ANIMATION_1:
             case AUDIO_ANIMATION_2:
+            case PERLIN_NOISE_ANIMATION:
                 colorMode(RGB);
                 break;
             case RAINBOW_SLOW_ANIMATION:
@@ -288,7 +279,6 @@ public class LightPanelSystem extends PApplet{
                 switchToState(CAMERA);
                 break;
             case 'W':
-                wipeUpAnimation.prepare();
                 switchToState(WIPE_UP);
                 break;
             case 'n':
@@ -298,6 +288,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'm':
                 switchToState(MOVIE);
+                break;
+            case 'p':
+                switchToState(PERLIN_NOISE_ANIMATION);
                 break;
             case 'h':
                 switchToState(HYPE_TEST);
