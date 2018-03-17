@@ -57,6 +57,7 @@ public class LightPanelSystem extends PApplet{
     final String NIAGRA_FALLS = "niagraFalls";
     final String SINE_DISTANCE = "sineDistances";
     final String SINE_WAVING = "sineWaving";
+    final String TRIPPY_CIRCLES = "trippyCircles";
 
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
@@ -101,6 +102,7 @@ public class LightPanelSystem extends PApplet{
         animations.put(NIAGRA_FALLS, new NiagraFalls(this));
         animations.put(SINE_DISTANCE, new SineDistance(this));
         animations.put(SINE_WAVING, new SineWaving(this));
+        animations.put(TRIPPY_CIRCLES, new TrippyCircle(this));
 
         H.init(this);
 
@@ -293,6 +295,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'q':
                 switchToState(SINE_WAVING);
+                break;
+            case 'e':
+                switchToState(TRIPPY_CIRCLES);
                 break;
             default:
                 clearLatches();

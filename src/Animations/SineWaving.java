@@ -6,6 +6,7 @@ public class SineWaving implements Animation {
     private LightPanelSystem applet;
     int h=0;
 
+    // TODO: memoization to reduce the heaviness of trig calculations?
     public SineWaving(LightPanelSystem applet) {
         this.applet = applet;
     }
