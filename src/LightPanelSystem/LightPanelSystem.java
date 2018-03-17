@@ -58,6 +58,8 @@ public class LightPanelSystem extends PApplet{
     final String SINE_DISTANCE = "sineDistances";
     final String SINE_WAVING = "sineWaving";
     final String TRIPPY_CIRCLES = "trippyCircles";
+    final String MICRO_WAVE = "microWave";
+    final String INFINITY_CIRCLE = "infinityCircle";
 
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
@@ -103,6 +105,8 @@ public class LightPanelSystem extends PApplet{
         animations.put(SINE_DISTANCE, new SineDistance(this));
         animations.put(SINE_WAVING, new SineWaving(this));
         animations.put(TRIPPY_CIRCLES, new TrippyCircle(this));
+        animations.put(MICRO_WAVE, new MicroWave(this));
+        animations.put(INFINITY_CIRCLE, new InfinityCircle(this));
 
         H.init(this);
 
@@ -298,6 +302,12 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'e':
                 switchToState(TRIPPY_CIRCLES);
+                break;
+            case 'k':
+                switchToState(MICRO_WAVE);
+                break;
+            case 'i':
+                switchToState(INFINITY_CIRCLE);
                 break;
             default:
                 clearLatches();
