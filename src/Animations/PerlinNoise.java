@@ -21,26 +21,30 @@ public class PerlinNoise implements Animation {
         this.applet = applet;
     }
 
+    // TODO: this seems to be causing memory issues
     public void play()
     {
         applet.noStroke();
         applet.smooth();
-        //applet.background(21, 8, 50);
+//        applet.background(21, 8, 50);
         for(int i = 0; i < nums; i++){
             radius = applet.map(i,0,nums,1,2);
-            alpha = applet.map(i,0,nums,0,250);
+            alpha = 0; //applet.map(i,0,nums,0,250);
 
-            applet.fill(69,33,124,alpha);
+//            applet.fill(69,33,124,alpha);
+            applet.fill(69,33,124);
             particles_a.get(i).move();
             particles_a.get(i).display(radius);
             particles_a.get(i).checkEdge();
 
-            applet.fill(7,153,242,alpha);
+//            applet.fill(7,153,242,alpha);
+            applet.fill(7,153,242);
             particles_b.get(i).move();
             particles_b.get(i).display(radius);
             particles_b.get(i).checkEdge();
 
-            applet.fill(255,255,255,alpha);
+//            applet.fill(255,255,255,alpha);
+            applet.fill(255,255,255);
             particles_c.get(i).move();
             particles_c.get(i).display(radius);
             particles_c.get(i).checkEdge();
@@ -59,6 +63,7 @@ public class PerlinNoise implements Animation {
         particles_a = new ArrayList<Particle>();
         particles_b = new ArrayList<Particle>();
         particles_c = new ArrayList<Particle>();
+        applet.background(21, 8, 50);
         for(int i = 0; i < nums; i++){
             particles_a.add(new Particle((int) applet.random(0, applet.width), (int) applet.random(0,applet.height), applet));
             particles_b.add(new Particle((int) applet.random(0, applet.width), (int) applet.random(0,applet.height), applet));
@@ -119,73 +124,3 @@ public class PerlinNoise implements Animation {
         }
     }
 }
-
-/*
-var particles_a = [];
-var particles_b = [];
-var particles_c = [];
-var nums =200;
-var noiseScale = 800;
-
-function setup(){
-	createCanvas(windowWidth, windowHeight);
-	background(21, 8, 50);
-	for(var i = 0; i < nums; i++){
-		particles_a[i] = new Particle(random(0, width),random(0,height));
-		particles_b[i] = new Particle(random(0, width),random(0,height));
-		particles_c[i] = new Particle(random(0, width),random(0,height));
-	}
-}
-
-function draw(){
-	noStroke();
-	smooth();
-		for(var i = 0; i < nums; i++){
-		var radius = map(i,0,nums,1,2);
-		var alpha = map(i,0,nums,0,250);
-
-		fill(69,33,124,alpha);
-		particles_a[i].move();
-		particles_a[i].display(radius);
-		particles_a[i].checkEdge();
-
-		fill(7,153,242,alpha);
-		particles_b[i].move();
-		particles_b[i].display(radius);
-		particles_b[i].checkEdge();
-
-		fill(255,255,255,alpha);
-		particles_c[i].move();
-		particles_c[i].display(radius);
-		particles_c[i].checkEdge();
-	}
-}
-
-
-function Particle(x, y){
-	this.dir = createVector(0, 0);
-	this.vel = createVector(0, 0);
-	this.pos = createVector(x, y);
-	this.speed = 0.4;
-
-	this.move = function(){
-		var angle = noise(this.pos.x/noiseScale, this.pos.y/noiseScale)*TWO_PI*noiseScale;
-		this.dir.x = cos(angle);
-		this.dir.y = sin(angle);
-		this.vel = this.dir.copy();
-		this.vel.mult(this.speed);
-		this.pos.add(this.vel);
-	}
-
-	this.checkEdge = function(){
-		if(this.pos.x > width || this.pos.x < 0 || this.pos.y > height || this.pos.y < 0){
-			this.pos.x = random(50, width);
-			this.pos.y = random(50, height);
-		}
-	}
-
-	this.display = function(r){
-		ellipse(this.pos.x, this.pos.y, r, r);
-	}
-}
- */

@@ -3,6 +3,7 @@ package Animations;
 import LightPanelSystem.LightPanelSystem;
 import processing.sound.FFT;
 import processing.sound.AudioIn;
+import java.util.Arrays;
 
 public class AudioTest2 implements Animation {
     private LightPanelSystem applet;
@@ -13,16 +14,23 @@ public class AudioTest2 implements Animation {
     int width, height;
     int bands = 64;
     float[] spectrum = new float[bands];
+    int msOfLastEval;
 
     public AudioTest2(LightPanelSystem applet) {
         this.applet = applet;
     }
 
     // TODO: fix malloc_error that occasionally pops up
+    // TODO: get bands to fit nicely within width
     public void play() {
         applet.background(0);
 
         fft.analyze(spectrum);
+
+        if (applet.millis() > (msOfLastEval + 10000)) {
+            System.out.println(Arrays.toString(spectrum));
+            msOfLastEval = applet.millis();
+        }
 
         for(int i = 0; i < bands; i++){
             // The result of the FFT is normalized
@@ -48,6 +56,8 @@ public class AudioTest2 implements Animation {
         in = new AudioIn(applet, 0);
         width = applet.width;
         height = applet.height;
+        applet.strokeWeight(6);
+        msOfLastEval = applet.millis();
     }
 
     public void prepare() {
@@ -56,9 +66,11 @@ public class AudioTest2 implements Animation {
 
         // patch the AudioIn
         fft.input(in);
+
     }
 
     public void cleanup() {
+        applet.strokeWeight(0);
         in.stop();
     }
 }

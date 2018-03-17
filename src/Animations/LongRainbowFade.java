@@ -28,7 +28,7 @@ public class LongRainbowFade implements Animation{
 
     public ColorMode getColorMode()
     {
-        return ColorMode.HSV;
+        return ColorMode.HSB;
     }
 
     public void setup()

@@ -54,6 +54,9 @@ public class LightPanelSystem extends PApplet{
     final String WIPE_UP = "wipeUp";
     final String MOVIE = "movie";
     final String HYPE_TEST = "hypeTest";
+    final String NIAGRA_FALLS = "niagraFalls";
+    final String SINE_DISTANCE = "sineDistances";
+    final String SINE_WAVING = "sineWaving";
 
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
@@ -95,6 +98,9 @@ public class LightPanelSystem extends PApplet{
         animations.put(MOVIE, new MovieTest(this));
         animations.put(HYPE_TEST, new HypeTest(this));
         animations.put(PERLIN_NOISE_ANIMATION, new PerlinNoise(this));
+        animations.put(NIAGRA_FALLS, new NiagraFalls(this));
+        animations.put(SINE_DISTANCE, new SineDistance(this));
+        animations.put(SINE_WAVING, new SineWaving(this));
 
         H.init(this);
 
@@ -160,6 +166,7 @@ public class LightPanelSystem extends PApplet{
         }
     }
 
+    // TODO: add exception handling and missing state
     private void switchToState(String newState)
     {
         if (state == newState) {
@@ -168,39 +175,16 @@ public class LightPanelSystem extends PApplet{
 
         currentStateStartedAtMs = millis();
 
-        // TODO: implement pre-state changes
-        switch(newState) {
-            case DEFAULT_ANIMATION:
-            case FIRE_ANIMATION:
-            case DOTS_ANIMATION:
-            case SPIRAL_ANIMATION:
-            case PSYCH_CUBE_ANIMATION:
-            case BUBBLE_SINE_ANIMATION:
-            case TRIPPY_TRIANGLES_ANIMATION:
-            case BLACKOUT:
-            //case CAMERA:
-            case WIPE_UP:
-            case MOVIE:
-            case HYPE_TEST:
-            case AUDIO_ANIMATION_1:
-            case AUDIO_ANIMATION_2:
-            case PERLIN_NOISE_ANIMATION:
-                colorMode(RGB);
-                break;
-            case RAINBOW_SLOW_ANIMATION:
-            case RAINBOW_FAST_ANIMATION:
-                colorMode(HSB);
-                break;
-            default:
-                return; // just return if we don't have an authorized state
-
-        }
-
         previousState = state;
         state = newState;
         previousAnimation = currentAnimation;
         previousAnimation.cleanup();
         currentAnimation = animations.get(newState);
+        if (currentAnimation.getColorMode() == ColorMode.RGB) {
+            colorMode(RGB);
+        } else if (currentAnimation.getColorMode() == ColorMode.HSB) {
+            colorMode(HSB);
+        }
         currentAnimation.prepare();
     }
 
@@ -300,6 +284,15 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'v':
                 switchToState(AUDIO_ANIMATION_2);
+                break;
+            case 'o':
+                switchToState(NIAGRA_FALLS);
+                break;
+            case 'l':
+                switchToState(SINE_DISTANCE);
+                break;
+            case 'q':
+                switchToState(SINE_WAVING);
                 break;
             default:
                 clearLatches();
