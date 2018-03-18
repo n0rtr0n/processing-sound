@@ -6,7 +6,7 @@ public class Strobe implements Animation {
     private LightPanelSystem applet;
 
     // this is how many flashes per second
-    float speed = 10;
+    float speed = 30;
     int msLastSwitch = 0;
     int color = 0;
 

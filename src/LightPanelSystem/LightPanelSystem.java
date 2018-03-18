@@ -10,7 +10,6 @@ import java.util.Map;
 
 import hype.*;
 
-
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -60,6 +59,7 @@ public class LightPanelSystem extends PApplet{
     final String TRIPPY_CIRCLES = "trippyCircles";
     final String MICRO_WAVE = "microWave";
     final String INFINITY_CIRCLE = "infinityCircle";
+    final String INFINITY_RECTANGLE = "infinityRectangle";
     final String LINES_TEST = "linesTest";
     final String STROBE = "strobe";
 
@@ -111,6 +111,7 @@ public class LightPanelSystem extends PApplet{
         animations.put(INFINITY_CIRCLE, new InfinityCircle(this));
         animations.put(LINES_TEST, new LinesTest(this));
         animations.put(STROBE, new Strobe(this));
+        animations.put(INFINITY_RECTANGLE, new InfinityRectangle(this));
 
         H.init(this);
 
@@ -315,6 +316,9 @@ public class LightPanelSystem extends PApplet{
                 break;
             case 'L':
                 switchToState(LINES_TEST);
+                break;
+            case 'I':
+                switchToState(INFINITY_RECTANGLE);
                 break;
             case 'O':
                 switchToState(STROBE);

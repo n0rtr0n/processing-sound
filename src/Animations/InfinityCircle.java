@@ -8,8 +8,8 @@ public class InfinityCircle implements Animation {
 
     ArrayList<Circle> circles;
 
-    float i = 0f, speed = 8f;
-    int numCircles = 4;
+    float i = 0f, speed = 10f;
+    int numCircles = 6;
     int maxFrame;
     float frameCounter = 0f;
     float stroke = 1f;
