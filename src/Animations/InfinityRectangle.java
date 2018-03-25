@@ -10,8 +10,8 @@ public class InfinityRectangle implements Animation {
 
     ArrayList<Rectangle> rectangles;
 
-    float i = 0f, speed = 5f;
-    int numRectangles = 12;
+    float i = 0f, speed = 3f;
+    int numRectangles = 5;
     int maxFrame;
     float frameCounter = 0f;
     float stroke = 10f;

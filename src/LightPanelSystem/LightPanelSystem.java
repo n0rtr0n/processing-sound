@@ -38,6 +38,7 @@ public class LightPanelSystem extends PApplet{
     // TODO: Implement blackout, audio transform animations
     final String AUDIO_ANIMATION_1 = "audioAnimation1";
     final String AUDIO_ANIMATION_2 = "audioAnimation2";
+    final String AUDIO_ANIMATION_3 = "audioAnimation3";
     final String DEFAULT_ANIMATION = "defaultAnimation";
     final String FIRE_ANIMATION = "fireAnimation";
     final String DOTS_ANIMATION = "dotsAnimation";
@@ -62,6 +63,7 @@ public class LightPanelSystem extends PApplet{
     final String INFINITY_RECTANGLE = "infinityRectangle";
     final String LINES_TEST = "linesTest";
     final String STROBE = "strobe";
+    final String RAINBOW_CIRCLES = "rainbowCircles";
 
     int currentStateStartedAtMs = 0;
     int currentTimerMillis = 0;
@@ -92,11 +94,12 @@ public class LightPanelSystem extends PApplet{
 
         animations.put(AUDIO_ANIMATION_1, new AudioTest1(this));
         animations.put(AUDIO_ANIMATION_2, new AudioTest2(this));
+        animations.put(AUDIO_ANIMATION_3, new AudioTest3(this));
         animations.put(FIRE_ANIMATION, new FireAnimation(this));
         animations.put(RAINBOW_SLOW_ANIMATION, new LongRainbowFade(this, colorWheel));
         animations.put(RAINBOW_FAST_ANIMATION, new FastRainbowFade(this, colorWheel));
         animations.put(DOTS_ANIMATION, new Dots(this));
-        animations.put(BUBBLE_SINE_ANIMATION, new BubbleSine(this));
+//        animations.put(BUBBLE_SINE_ANIMATION, new BubbleSine(this));
         animations.put(SPIRAL_ANIMATION, new Spiral(this));
         animations.put(TRIPPY_TRIANGLES_ANIMATION, new TrippyTriangles(this));
         animations.put(WIPE_UP,  new WipeUp(this));
@@ -112,6 +115,7 @@ public class LightPanelSystem extends PApplet{
         animations.put(LINES_TEST, new LinesTest(this));
         animations.put(STROBE, new Strobe(this));
         animations.put(INFINITY_RECTANGLE, new InfinityRectangle(this));
+        animations.put(RAINBOW_CIRCLES, new RainbowCircles(this));
 
         H.init(this);
 
@@ -246,9 +250,6 @@ public class LightPanelSystem extends PApplet{
             case 's':
                 switchToState(SPIRAL_ANIMATION);
                 break;
-            case 'S':
-                switchToState(BUBBLE_SINE_ANIMATION);
-                break;
             case 'B':
                 switchToState(BLACKOUT);
                 break;
@@ -271,34 +272,37 @@ public class LightPanelSystem extends PApplet{
                 }
                 break;
             case 'C':
-                switchToState(CAMERA);
+                switchToState(RAINBOW_CIRCLES);
                 break;
             case 'W':
                 switchToState(WIPE_UP);
                 break;
             case 'n':
                 if (state == WIPE_UP) {
-                    wipeUpAnimation.initiateWipeUp();
+                    //animations.get(WIPE_UP).initiateWipeUp();
                 }
                 break;
             case 'm':
                 switchToState(MOVIE);
                 break;
-            case 'p':
-                switchToState(PERLIN_NOISE_ANIMATION);
-                break;
+//            case 'p':
+//                switchToState(PERLIN_NOISE_ANIMATION);
+//                break;
             case 'h':
                 switchToState(HYPE_TEST);
                 break;
-            case 'u':
-                switchToState(AUDIO_ANIMATION_1);
-                break;
-            case 'v':
-                switchToState(AUDIO_ANIMATION_2);
-                break;
-            case 'o':
-                switchToState(NIAGRA_FALLS);
-                break;
+//            case 'u':
+//                switchToState(AUDIO_ANIMATION_1);
+//                break;
+//            case 'v':
+//                switchToState(AUDIO_ANIMATION_2);
+//                break;
+//            case 'U':
+//                switchToState(AUDIO_ANIMATION_3);
+//                break;
+//            case 'o':
+//                switchToState(NIAGRA_FALLS);
+//                break;
             case 'l':
                 switchToState(SINE_DISTANCE);
                 break;

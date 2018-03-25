@@ -8,7 +8,7 @@ public class InfinityCircle implements Animation {
 
     ArrayList<Circle> circles;
 
-    float i = 0f, speed = 10f;
+    float i = 0f, speed = 5f;
     int numCircles = 6;
     int maxFrame;
     float frameCounter = 0f;
@@ -19,11 +19,12 @@ public class InfinityCircle implements Animation {
         this.applet = applet;
     }
 
+    //TODO: refactor so that new objects are not created and destroyed, but just scale up and down and reset to 0 values accordingly
     public void play() {
         applet.background(20);
         applet.stroke(240);
         applet.noFill();
-        stroke = 100 * (frameCounter / maxFrame);
+        stroke = 20;// * (frameCounter / maxFrame);
         applet.strokeWeight(stroke);
 
         for (int j = 0; j < circles.size(); j++) {
